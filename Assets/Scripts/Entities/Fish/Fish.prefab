@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64a63bb441813a74e9416bfbdeed5716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnergyLevel: 0
+  EnergyLevel: 100
 --- !u!54 &8641737124863503000
 Rigidbody:
   m_ObjectHideFlags: 0

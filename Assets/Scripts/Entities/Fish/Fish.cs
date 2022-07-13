@@ -23,7 +23,7 @@ namespace FishBowlGame.Entities
 
         private Vector3 _cohesion, _alignment, _separation, _evasion, _food, _optimalDirection;
         private int _hitCount = 0;
-        public float EnergyLevel = 0;
+        public float EnergyLevel = 100;
 
         void Start()
         {
@@ -87,9 +87,9 @@ namespace FishBowlGame.Entities
                 }
 
                 var scaledDistance = direction.magnitude / _generalFishSettings.PerceptionRange;
-                _cohesion += _swarmSettings.CohesionCurve.Evaluate(scaledDistance) * _swarmSettings.CohesionMultiplier * direction.normalized;
-                _alignment += _swarmSettings.AlignmentCurve.Evaluate(scaledDistance) * _swarmSettings.AlignmentMultiplier * _fishManager.Fish[i].transform.forward;
-                _separation += _swarmSettings.SeparationCurve.Evaluate(scaledDistance) * _swarmSettings.SeparationMultiplier * -direction.normalized;
+                _cohesion += _swarmSettings.CohesionCurve.Evaluate(scaledDistance) * direction.normalized;
+                _alignment += _swarmSettings.AlignmentCurve.Evaluate(scaledDistance) * _fishManager.Fish[i].transform.forward;
+                _separation += _swarmSettings.SeparationCurve.Evaluate(scaledDistance) * -direction.normalized;
                 _hitCount++;
             }
 

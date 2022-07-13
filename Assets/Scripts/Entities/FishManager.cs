@@ -11,13 +11,10 @@ namespace FishBowlGame.Entities
     {
         public AnimationCurve CohesionCurve;
         public float CohesionWeight = 1f;
-        public float CohesionMultiplier = 1f;
         public AnimationCurve AlignmentCurve;
         public float AlignmentWeight = 1f;
-        public float AlignmentMultiplier = 1f;
         public AnimationCurve SeparationCurve;
         public float SeparationWeight = 1f;
-        public float SeparationMultiplier = 1f;
     }
 
     [Serializable]
