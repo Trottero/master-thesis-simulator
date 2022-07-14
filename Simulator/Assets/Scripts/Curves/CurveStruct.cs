@@ -33,7 +33,7 @@ namespace Simulator.Curves
         float Evaluate(float time);
     }
 
-    public struct SeperationCurveReference : ICurveReference
+    public struct SeparationCurveReference : ICurveReference
     {
         public BlobAssetReference<CurveStruct> CurveReference { get; set; }
         public readonly float Evaluate(float time) => CurveReference.Value.GetValueAtTime(time);

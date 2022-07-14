@@ -10,15 +10,15 @@ namespace Simulator.Curves
     public class CurveConverter : MonoBehaviour, IConvertGameObjectToEntity
     {
         public int NumberOfSamples = 16;
+        public AnimationCurve separationCurve;
+        public AnimationCurve cohesionCurve;
+        public AnimationCurve alignmentCurve;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
             var controller = GetComponent<BoidController>();
-            var seperationCurve = controller.configuration.SeperationCurve;
-            var cohesionCurve = controller.configuration.CohesionCurve;
-            var alignmentCurve = controller.configuration.AlignmentCurve;
 
-            ConvertCurve<SeperationCurveReference>(entity, dstManager, seperationCurve);
+            ConvertCurve<SeparationCurveReference>(entity, dstManager, separationCurve);
             ConvertCurve<AlignmentCurveReference>(entity, dstManager, alignmentCurve);
             ConvertCurve<CohesionCurveReference>(entity, dstManager, cohesionCurve);
         }
@@ -41,6 +41,8 @@ namespace Simulator.Curves
 
             var curveReference = new T { CurveReference = blobAssetReference };
             dstManager.AddComponentData(entity, curveReference);
+
+            blobBuilder.Dispose();
         }
 
         // Start is called before the first frame update

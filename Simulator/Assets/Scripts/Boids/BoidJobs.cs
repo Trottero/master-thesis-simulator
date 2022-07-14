@@ -33,12 +33,13 @@ namespace Simulator.Boids
     [BurstCompile]
     public partial struct UpdateBoidLocationJob : IJobEntity
     {
+        [ReadOnly] public BoidsConfiguration config;
         [ReadOnly] public float DeltaTime;
         void Execute(ref LocalToWorld localToWorld, in BoidComponent boid)
         {
             localToWorld.Value = float4x4.TRS(
-                localToWorld.Position + boid.optimalDirection * DeltaTime,
-                quaternion.LookRotation(boid.optimalDirection, localToWorld.Up),
+                localToWorld.Position + boid.optimalDirection * DeltaTime * config.Speed,
+                quaternion.LookRotationSafe(boid.optimalDirection, localToWorld.Up),
                 new float3(10f));
         }
     }
@@ -52,10 +53,10 @@ namespace Simulator.Boids
 
         void Execute(
             ref BoidComponent boid,
-            in LocalToWorld localToWorld
-            // in SeperationCurveReference seperationCurve,
-            // in AlignmentCurveReference alignmentCurve,
-            // in CohesionCurveReference cohesionCurve
+            in LocalToWorld localToWorld,
+            in SeparationCurveReference seperationCurve,
+            in AlignmentCurveReference alignmentCurve,
+            in CohesionCurveReference cohesionCurve
             )
         {
             float3 seperation = float3.zero;
@@ -67,37 +68,33 @@ namespace Simulator.Boids
             for (int i = 0; i < OtherBoids.Length; i++)
             {
                 // Calculate optimal direction here :)
-                if (math.distance(localToWorld.Position, OtherBoids[i].Position) < config.PerceptionRange)
+                var distance = math.distance(localToWorld.Position, OtherBoids[i].Position);
+                if (distance < config.PerceptionRange)
                 {
-                    // var distanceNormalized = boidDistance / config.PerceptionRange;
+                    var distanceNormalized = distance / config.PerceptionRange;
                     boidsInRange++;
 
                     // calculate seperation
-                    seperation -= OtherBoids[i].Position;
+                    seperation -= (OtherBoids[i].Position - localToWorld.Position) * seperationCurve.Evaluate(distanceNormalized);
                     // Calculate cohesion
-                    cohesion += OtherBoids[i].Position;
+                    cohesion += (OtherBoids[i].Position - localToWorld.Position) * cohesionCurve.Evaluate(distanceNormalized);
                     // calculate alignment
-                    alignment += OtherBoids[i].Direction;
+                    alignment += OtherBoids[i].Direction * alignmentCurve.Evaluate(distanceNormalized);
                 }
             }
 
             // We now have the total world space and direction of all boids in range
-            if (boidsInRange > 0)
-            {
-                seperation /= boidsInRange;
-                cohesion /= boidsInRange;
-                alignment /= boidsInRange;
 
-                // Calculate seperation
-                seperation = math.normalize(seperation - localToWorld.Position);
-                // Calculate cohesion
-                cohesion = math.normalize(cohesion - localToWorld.Position);
-                // Calculate alignment
-                alignment = math.normalize(alignment);
-            }
+            // Calculate seperation
+            seperation = math.normalizesafe(seperation, float3.zero);
+            // Calculate cohesion
+            cohesion = math.normalizesafe(cohesion, float3.zero);
+            // Calculate alignment
+            alignment = math.normalizesafe(alignment, float3.zero);
 
-
-            boid.optimalDirection = config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation;
+            boid.optimalDirection = math.normalizesafe(
+                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation,
+                localToWorld.Forward);
         }
     }
 }

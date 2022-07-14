@@ -23,18 +23,18 @@ namespace Simulator.Curves
             var gameControllerEntity = _gameControllerEntity;
             Entities
                 .WithAll<BoidComponent>()
-                .WithNone<SeperationCurveReference, CohesionCurveReference, AlignmentCurveReference>()
+                .WithNone<SeparationCurveReference, CohesionCurveReference, AlignmentCurveReference>()
                 .ForEach((Entity e) =>
                 {
-                    ecb.AddComponent<SeperationCurveReference>(e);
+                    ecb.AddComponent<SeparationCurveReference>(e);
                     ecb.AddComponent<CohesionCurveReference>(e);
                     ecb.AddComponent<AlignmentCurveReference>(e);
 
-                    var accelerationCurveReference = GetComponent<SeperationCurveReference>(gameControllerEntity);
+                    var separationCurveReference = GetComponent<SeparationCurveReference>(gameControllerEntity);
                     var cohesionCurveReference = GetComponent<CohesionCurveReference>(gameControllerEntity);
                     var alignmentCurveReference = GetComponent<AlignmentCurveReference>(gameControllerEntity);
 
-                    ecb.SetComponent(e, accelerationCurveReference);
+                    ecb.SetComponent(e, separationCurveReference);
                     ecb.SetComponent(e, cohesionCurveReference);
                     ecb.SetComponent(e, alignmentCurveReference);
 

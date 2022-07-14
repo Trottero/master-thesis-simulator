@@ -17,10 +17,10 @@ namespace Simulator.Boids
         {
             boid_query = GetEntityQuery(
                 ComponentType.ReadWrite<BoidComponent>(),
-                ComponentType.ReadOnly<LocalToWorld>()
-                // ComponentType.ReadOnly<CohesionCurveReference>(),
-                // ComponentType.ReadOnly<AlignmentCurveReference>(),
-                // ComponentType.ReadOnly<SeperationCurveReference>()
+                ComponentType.ReadOnly<LocalToWorld>(),
+                ComponentType.ReadOnly<CohesionCurveReference>(),
+                ComponentType.ReadOnly<AlignmentCurveReference>(),
+                ComponentType.ReadOnly<SeparationCurveReference>()
                 );
         }
 
@@ -57,8 +57,10 @@ namespace Simulator.Boids
 
             var updateBoidJob = new UpdateBoidLocationJob
             {
-                DeltaTime = Time.DeltaTime
+                DeltaTime = Time.DeltaTime,
+                config = controller.configuration.Values
             };
+
             var updateBoidJobHandle = updateBoidJob.ScheduleParallel(boid_query, boidJobHandle);
             updateBoidJobHandle.Complete();
 

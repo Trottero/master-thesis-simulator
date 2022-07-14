@@ -103,9 +103,6 @@ namespace Simulator.Boids
     public class BoidsConfigurationRef
     {
         public BoidsConfiguration Values;
-        public AnimationCurve SeperationCurve;
-        public AnimationCurve CohesionCurve;
-        public AnimationCurve AlignmentCurve;
 
     }
 
