@@ -78,7 +78,7 @@ namespace Simulator.Boids
                     Value = float4x4.TRS(
                        RandomPosition(rng),
                        RandomRotation(rng),
-                       new float3(10f, 10f, 10f))
+                       new float3(10f))
                 });
             }
 

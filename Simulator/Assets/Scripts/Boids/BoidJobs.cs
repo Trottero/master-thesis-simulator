@@ -37,9 +37,11 @@ namespace Simulator.Boids
         [ReadOnly] public float DeltaTime;
         void Execute(ref LocalToWorld localToWorld, in BoidComponent boid)
         {
+            var ql = quaternion.LookRotation(boid.optimalDirection, math.up());
+
             localToWorld.Value = float4x4.TRS(
-                localToWorld.Position + boid.optimalDirection * DeltaTime * config.Speed,
-                quaternion.LookRotationSafe(boid.optimalDirection, localToWorld.Up),
+                localToWorld.Position + math.normalizesafe(localToWorld.Forward) * DeltaTime * config.Speed,
+                ql,
                 new float3(10f));
         }
     }
@@ -92,9 +94,15 @@ namespace Simulator.Boids
             // Calculate alignment
             alignment = math.normalizesafe(alignment, float3.zero);
 
+            float3 stayInCube = float3.zero;
+            if (math.distance(localToWorld.Position, float3.zero) > 8)
+            {
+                stayInCube = math.normalizesafe(-localToWorld.Position) * 1f;
+            }
+
             boid.optimalDirection = math.normalizesafe(
-                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation,
-                localToWorld.Forward);
+                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation + stayInCube,
+                math.normalizesafe(localToWorld.Forward));
         }
     }
 }
