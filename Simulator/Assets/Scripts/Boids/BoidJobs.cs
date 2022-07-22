@@ -42,7 +42,7 @@ namespace Simulator.Boids
             localToWorld.Value = float4x4.TRS(
                 localToWorld.Position + math.normalizesafe(localToWorld.Forward) * DeltaTime * config.Speed,
                 ql,
-                new float3(10f));
+                new float3(1f));
         }
     }
 
