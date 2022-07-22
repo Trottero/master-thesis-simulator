@@ -37,12 +37,39 @@ namespace Simulator.Boids
         [ReadOnly] public float DeltaTime;
         void Execute(ref LocalToWorld localToWorld, in BoidComponent boid)
         {
-            var ql = quaternion.LookRotation(boid.optimalDirection, math.up());
+            var adjustedRotation = RotateTowards(localToWorld.Forward, boid.optimalDirection, DeltaTime * math.radians(config.RotationSpeed), 0f);
+
+            var ql = quaternion.LookRotation(adjustedRotation, math.up());
 
             localToWorld.Value = float4x4.TRS(
                 localToWorld.Position + math.normalizesafe(localToWorld.Forward) * DeltaTime * config.Speed,
                 ql,
                 new float3(1f));
+        }
+
+        public float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)
+        {
+            float delta = math.acos(math.dot(current, target) / (math.length(current) * math.length(target)));
+            float magDiff = math.length(target) - math.length(current);
+            float sign = math.sign(magDiff);
+            float maxMagDelta = math.min(maxMag, math.abs(magDiff));
+            float diff = math.min(1f, maxRadsDelta / delta);
+
+            return float3Slerp(current, target, diff) * (math.length(current) + maxMagDelta * sign);
+        }
+
+        public float3 float3Slerp(float3 current, float3 target, float scale)
+        {
+            if (scale == 0f)
+            {
+                return current;
+            }
+            if (scale == 1f)
+            {
+                return target;
+            }
+
+            return current + (target - current) * scale;
         }
     }
 
