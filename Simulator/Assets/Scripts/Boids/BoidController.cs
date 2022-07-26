@@ -23,11 +23,11 @@ namespace Simulator.Boids
 
         public static BoidController Instance;
 
-        unsafe void Awake()
+        void Awake()
         {
             Instance = this;
 
-            EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             var archtype = entityManager.CreateArchetype(
                 typeof(BoidComponent),
                 typeof(LocalToWorld),
@@ -39,43 +39,45 @@ namespace Simulator.Boids
                 typeof(PhysicsDamping),
                 typeof(PhysicsGravityFactor));
 
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            var prototype = entityManager.CreateEntity(archtype);
 
             var rm = new RenderMeshDescription(BoidMesh, BoidMaterial);
+            RenderMeshUtility.AddComponents(prototype, entityManager, rm);
 
-            var proto = entityManager.CreateEntity(archtype);
+            SetPhysicsForPrototype(entityManager, prototype);
 
+            SpawnBoids(entityManager, prototype);
+
+            entityManager.DestroyEntity(prototype);
+        }
+
+        private void SetPhysicsForPrototype(EntityManager entityManager, Entity proto)
+        {
             entityManager.SetComponentData(proto, new PhysicsGravityFactor
             {
-                Value = 0.0f
+                Value = 0f
             });
 
             BlobAssetReference<Collider> spCollider = Unity.Physics.SphereCollider.Create(new SphereGeometry
             {
                 Center = float3.zero,
-                Radius = 0.01f
+                Radius = 0.07f
             });
 
             entityManager.SetComponentData(proto, new PhysicsCollider { Value = spCollider });
 
-            Collider* colliderPtr = (Collider*)spCollider.GetUnsafePtr();
-            entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 1f));
+            unsafe
+            {
+                Collider* colliderPtr = (Collider*)spCollider.GetUnsafePtr();
+                entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 1f));
+            }
 
-            // float3 angularVelocityLocal = math.mul(math.inverse(colliderPtr->MassProperties.MassDistribution.Transform.rot), float3.zero);
-            // entityManager.SetComponentData(proto, new PhysicsVelocity()
-            // {
-            //     Linear = float3.zero,
-            //     Angular = angularVelocityLocal
-            // });
-
-            // entityManager.SetComponentData(proto, new PhysicsDamping()
-            // {
-            //     Linear = 0.01f,
-            //     Angular = 0.05f
-            // });
-
-            RenderMeshUtility.AddComponents(proto, entityManager, rm);
             entityManager.AddSharedComponentData(proto, new PhysicsWorldIndex());
+        }
+
+        private void SpawnBoids(EntityManager entityManager, Entity proto)
+        {
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
             var spawnJob = new SpawnBoidsJob
             {
@@ -90,7 +92,6 @@ namespace Simulator.Boids
 
             ecb.Playback(entityManager);
             ecb.Dispose();
-            entityManager.DestroyEntity(proto);
         }
 
         void OnDrawGizmos()
