@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 429673568}
   - component: {fileID: 429673569}
+  - component: {fileID: 429673570}
   m_Layer: 0
   m_Name: BoidController
   m_TagString: Untagged
@@ -179,6 +180,27 @@ MonoBehaviour:
       SeperationWeight: 1
       CohesionWeight: 1
       AlignmentWeight: 0.4
+--- !u!114 &429673570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429673567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d30974bf68d61043b1572197db94cdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SimulationType: 1
+  m_Gravity:
+    x: -0
+    y: -9.81
+    z: -0
+  m_SolverIterationCount: 4
+  m_EnableSolverStabilizationHeuristic: 0
+  m_MultiThreaded: 1
+  m_SynchronizeCollisionWorld: 0
 --- !u!1 &1687258581
 GameObject:
   m_ObjectHideFlags: 0
