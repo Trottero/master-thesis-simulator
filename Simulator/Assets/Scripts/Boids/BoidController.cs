@@ -6,6 +6,8 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Jobs;
 using System;
+using Unity.Physics;
+using Collider = Unity.Physics.Collider;
 
 namespace Simulator.Boids
 {
@@ -16,19 +18,26 @@ namespace Simulator.Boids
         public int SwarmSize = 100;
 
         [SerializeField] public Mesh BoidMesh;
-        [SerializeField] public Material BoidMaterial;
+        [SerializeField] public UnityEngine.Material BoidMaterial;
         [SerializeField] public BoidsConfigurationRef configuration;
 
         public static BoidController Instance;
 
-        void Awake()
+        unsafe void Awake()
         {
             Instance = this;
 
             EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             var archtype = entityManager.CreateArchetype(
                 typeof(BoidComponent),
-                typeof(LocalToWorld));
+                typeof(LocalToWorld),
+                typeof(Rotation),
+                typeof(Translation),
+                typeof(PhysicsCollider),
+                typeof(PhysicsVelocity),
+                typeof(PhysicsMass),
+                typeof(PhysicsDamping),
+                typeof(PhysicsGravityFactor));
 
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
 
@@ -36,7 +45,37 @@ namespace Simulator.Boids
 
             var proto = entityManager.CreateEntity(archtype);
 
+            entityManager.SetComponentData(proto, new PhysicsGravityFactor
+            {
+                Value = 0.0f
+            });
+
+            BlobAssetReference<Collider> spCollider = Unity.Physics.SphereCollider.Create(new SphereGeometry
+            {
+                Center = float3.zero,
+                Radius = 0.01f
+            });
+
+            entityManager.SetComponentData(proto, new PhysicsCollider { Value = spCollider });
+
+            Collider* colliderPtr = (Collider*)spCollider.GetUnsafePtr();
+            entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 1f));
+
+            // float3 angularVelocityLocal = math.mul(math.inverse(colliderPtr->MassProperties.MassDistribution.Transform.rot), float3.zero);
+            // entityManager.SetComponentData(proto, new PhysicsVelocity()
+            // {
+            //     Linear = float3.zero,
+            //     Angular = angularVelocityLocal
+            // });
+
+            // entityManager.SetComponentData(proto, new PhysicsDamping()
+            // {
+            //     Linear = 0.01f,
+            //     Angular = 0.05f
+            // });
+
             RenderMeshUtility.AddComponents(proto, entityManager, rm);
+            entityManager.AddSharedComponentData(proto, new PhysicsWorldIndex());
 
             var spawnJob = new SpawnBoidsJob
             {
@@ -73,12 +112,14 @@ namespace Simulator.Boids
                 var e = Ecb.Instantiate(index, Prototype);
                 var rng = new System.Random(index);
 
-                Ecb.SetComponent(index, e, new LocalToWorld
+                Ecb.SetComponent(index, e, new Rotation
                 {
-                    Value = float4x4.TRS(
-                       RandomPosition(rng),
-                       RandomRotation(rng),
-                       new float3(1f))
+                    Value = RandomRotation(rng)
+                });
+
+                Ecb.SetComponent(index, e, new Translation
+                {
+                    Value = RandomPosition(rng)
                 });
             }
 
