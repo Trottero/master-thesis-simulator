@@ -15,9 +15,10 @@ namespace Simulator.Boids
         [ReadOnly] public float DeltaTime;
         void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform, in PhysicsMass physicsMass, in BoidComponent boid)
         {
-            // var adjustedRotation = RotateTowards(transform.Forward, boid.optimalDirection, config.RotationSpeed, 0f);
+            var maxRot = math.radians(config.RotationSpeed);
+            var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward), boid.optimalDirection, maxRot, 0f);
 
-            physicsVelocity.Linear += (boid.optimalDirection - physicsVelocity.Linear) * DeltaTime;
+            physicsVelocity.Linear += (adjustedRotation - physicsVelocity.Linear) * DeltaTime;
 
             // This should force the boid to rotate towards the direction it wants to go.
             var diff = boid.optimalDirection - transform.Forward;

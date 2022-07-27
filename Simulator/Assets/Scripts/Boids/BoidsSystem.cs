@@ -10,6 +10,7 @@ using Unity.Physics;
 
 namespace Simulator.Boids
 {
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class BoidsSystem : SystemBase
     {
         EntityQuery boid_query;

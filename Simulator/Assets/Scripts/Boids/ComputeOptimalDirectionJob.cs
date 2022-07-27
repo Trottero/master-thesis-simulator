@@ -58,11 +58,11 @@ namespace Simulator.Boids
             float3 stayInCube = float3.zero;
             if (math.distance(localToWorld.Position, float3.zero) > 8)
             {
-                stayInCube = math.normalizesafe(-localToWorld.Position) * 1f;
+                stayInCube = math.normalizesafe(-localToWorld.Position);
             }
 
             boid.optimalDirection = math.normalizesafe(
-                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation + stayInCube,
+                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation + stayInCube * config.StayInCubeWeight,
                 math.normalizesafe(localToWorld.Forward));
         }
     }

@@ -157,5 +157,6 @@ namespace Simulator.Boids
         public float SeperationWeight;
         public float CohesionWeight;
         public float AlignmentWeight;
+        public float StayInCubeWeight;
     }
 }
