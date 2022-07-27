@@ -69,7 +69,7 @@ namespace Simulator.Boids
             unsafe
             {
                 Collider* colliderPtr = (Collider*)spCollider.GetUnsafePtr();
-                entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 1f));
+                entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 0.1f));
             }
 
             entityManager.AddSharedComponentData(proto, new PhysicsWorldIndex());

@@ -175,7 +175,7 @@ MonoBehaviour:
   configuration:
     Values:
       Speed: 2
-      RotationSpeed: 200
+      RotationSpeed: 360
       PerceptionRange: 10
       SeperationWeight: 1
       CohesionWeight: 1
