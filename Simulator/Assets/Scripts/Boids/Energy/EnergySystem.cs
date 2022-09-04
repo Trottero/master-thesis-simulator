@@ -8,15 +8,22 @@ namespace Simulator.Boids.Energy
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class EnergySystem : SystemBase
     {
+        private BoidController controller;
+
         protected override void OnUpdate()
         {
+            if (!controller)
+            {
+                controller = BoidController.Instance;
+                return;
+            }
+
             var dt = Time.fixedDeltaTime;
-            var spd = 1f;
 
             // Update energy level
             Entities.WithAll<BoidComponent, RenderMesh>().WithoutBurst().ForEach((ref EnergyComponent energy) =>
             {
-                energy.EnergyLevel -= spd * dt;
+                energy.EnergyLevel -= controller.configuration.EnergyConfig.ConsumptionRate * dt;
                 // mesh.material.color = new Color(1f, 1f, 1f, energy.EnergyLevel);
             }).ScheduleParallel();
 

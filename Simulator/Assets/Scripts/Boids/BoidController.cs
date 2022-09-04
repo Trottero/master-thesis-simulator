@@ -20,7 +20,7 @@ namespace Simulator.Boids
 
         [SerializeField] public Mesh BoidMesh;
         [SerializeField] public UnityEngine.Material BoidMaterial;
-        [SerializeField] public BoidsConfigurationRef configuration;
+        [SerializeField] public SimulationConfiguration configuration;
 
         public static BoidController Instance;
 
@@ -48,7 +48,7 @@ namespace Simulator.Boids
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
-                EnergyLevel = 10f
+                EnergyLevel = configuration.EnergyConfig.ConsumptionRate
             });
 
             SetPhysicsForPrototype(entityManager, prototype);
@@ -149,9 +149,10 @@ namespace Simulator.Boids
 
 
     [Serializable]
-    public class BoidsConfigurationRef
+    public class SimulationConfiguration
     {
         public BoidsConfiguration BoidConfig;
+        public EnergyConfiguration EnergyConfig;
     }
 
     [Serializable]
@@ -167,6 +168,7 @@ namespace Simulator.Boids
         public float FoodSourceWeight;
     }
 
+    [Serializable]
     public struct EnergyConfiguration
     {
         public float InitialEnergyLevel;

@@ -49,11 +49,6 @@ namespace Simulator.Boids
             if (!controller)
             {
                 controller = BoidController.Instance;
-            }
-
-            if (!controller)
-            {
-                // Unitialized
                 return;
             }
 
