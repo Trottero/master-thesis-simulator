@@ -11,7 +11,7 @@ namespace Simulator.Boids
     public partial struct ComputeOptimalDirectionJob : IJobEntity
     {
         [ReadOnly] public NativeArray<BoidProperties> OtherBoids;
-
+        [ReadOnly] public NativeArray<LocalToWorld> FoodSources;
         [ReadOnly] public BoidsConfiguration config;
 
         void Execute(
@@ -61,9 +61,32 @@ namespace Simulator.Boids
                 stayInCube = math.normalizesafe(-localToWorld.Position);
             }
 
+            float3 foodsource = math.normalizesafe(GetClosestFoodSource(localToWorld.Position) - localToWorld.Position, float3.zero);
+
             boid.optimalDirection = math.normalizesafe(
-                config.AlignmentWeight * alignment + config.CohesionWeight * cohesion + config.SeperationWeight * seperation + stayInCube * config.StayInCubeWeight,
-                math.normalizesafe(localToWorld.Forward));
+                config.AlignmentWeight * alignment +
+                config.CohesionWeight * cohesion +
+                config.SeperationWeight * seperation +
+                config.StayInCubeWeight * stayInCube +
+                config.FoodSourceWeight * foodsource,
+            math.normalizesafe(localToWorld.Forward));
+        }
+
+        float3 GetClosestFoodSource(float3 position)
+        {
+            float3 closestFoodSource = float3.zero;
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < FoodSources.Length; i++)
+            {
+                var distance = math.distance(position, FoodSources[i].Position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestFoodSource = FoodSources[i].Position;
+                }
+            }
+
+            return closestFoodSource;
         }
     }
 }

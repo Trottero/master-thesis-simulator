@@ -151,8 +151,7 @@ namespace Simulator.Boids
     [Serializable]
     public class BoidsConfigurationRef
     {
-        public BoidsConfiguration Values;
-
+        public BoidsConfiguration BoidConfig;
     }
 
     [Serializable]
@@ -165,5 +164,12 @@ namespace Simulator.Boids
         public float CohesionWeight;
         public float AlignmentWeight;
         public float StayInCubeWeight;
+        public float FoodSourceWeight;
+    }
+
+    public struct EnergyConfiguration
+    {
+        public float InitialEnergyLevel;
+        public float ConsumptionRate;
     }
 }
