@@ -8,6 +8,7 @@ using Unity.Jobs;
 using System;
 using Unity.Physics;
 using Collider = Unity.Physics.Collider;
+using Simulator.Boids.Energy;
 
 namespace Simulator.Boids
 {
@@ -37,12 +38,18 @@ namespace Simulator.Boids
                 typeof(PhysicsVelocity),
                 typeof(PhysicsMass),
                 typeof(PhysicsDamping),
-                typeof(PhysicsGravityFactor));
+                typeof(PhysicsGravityFactor),
+                typeof(EnergyComponent));
 
             var prototype = entityManager.CreateEntity(archtype);
 
             var rm = new RenderMeshDescription(BoidMesh, BoidMaterial);
             RenderMeshUtility.AddComponents(prototype, entityManager, rm);
+
+            entityManager.SetComponentData(prototype, new EnergyComponent
+            {
+                EnergyLevel = 10f
+            });
 
             SetPhysicsForPrototype(entityManager, prototype);
 

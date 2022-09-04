@@ -16,34 +16,13 @@ namespace Simulator.Boids
         void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform, in PhysicsMass physicsMass, in BoidComponent boid)
         {
             var maxRot = math.radians(config.RotationSpeed);
-            var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward), boid.optimalDirection, maxRot, 0f);
+            var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward), boid.optimalDirection, maxRot * DeltaTime, 0f);
 
-            physicsVelocity.Linear += (adjustedRotation - physicsVelocity.Linear) * DeltaTime;
+            physicsVelocity.Linear = adjustedRotation;
 
             // This should force the boid to rotate towards the direction it wants to go.
             var diff = boid.optimalDirection - transform.Forward;
             physicsVelocity.Angular = diff;
-            // var ql = quaternion.LookRotation(adjustedRotation, math.up());
-
-            // transform.Value = float4x4.TRS(
-            // transform.Position + math.normalizesafe(transform.Forward) * DeltaTime * config.Speed,
-            // ql,
-            // new float3(1f));
-
-
-            // transform.Value = float4x4.TRS(
-            //                 transform.Position,
-            //                 ql,
-            //                 new float3(1f));
-
-
-            // var force = boid.optimalDirection * 0.1f * DeltaTime;
-            // physicsVelocity.ApplyLinearImpulse(physicsMass, force);
-
-            // localToWorld.Value = float4x4.TRS(
-            //     localToWorld.Position + math.normalizesafe(localToWorld.Forward) * DeltaTime * config.Speed,
-            //     ql,
-            //     new float3(1f));
         }
 
         public float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)

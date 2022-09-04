@@ -180,6 +180,7 @@ MonoBehaviour:
       SeperationWeight: 1
       CohesionWeight: 1
       AlignmentWeight: 0.4
+      StayInCubeWeight: 1
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0
