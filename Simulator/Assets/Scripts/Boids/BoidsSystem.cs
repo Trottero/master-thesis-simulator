@@ -71,6 +71,8 @@ namespace Simulator.Boids
             };
             var copyFoodSourceLocationsJobHandle = copyFoodSourceLocationsJob.ScheduleParallel(food_source_query, copyLocationsJobHandle);
 
+            
+
             var bj = new ComputeOptimalDirectionJob
             {
                 OtherBoids = boidPositions,

@@ -13,6 +13,7 @@ namespace Simulator.Curves
         public AnimationCurve separationCurve;
         public AnimationCurve cohesionCurve;
         public AnimationCurve alignmentCurve;
+        public AnimationCurve energyCurve;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -21,6 +22,7 @@ namespace Simulator.Curves
             ConvertCurve<SeparationCurveReference>(entity, dstManager, separationCurve);
             ConvertCurve<AlignmentCurveReference>(entity, dstManager, alignmentCurve);
             ConvertCurve<CohesionCurveReference>(entity, dstManager, cohesionCurve);
+            ConvertCurve<EnergyCurveReference>(entity, dstManager, energyCurve);
         }
 
         private void ConvertCurve<T>(Entity entity, EntityManager dstManager, AnimationCurve curve) where T : struct, ICurveReference

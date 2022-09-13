@@ -48,7 +48,7 @@ namespace Simulator.Boids
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
-                EnergyLevel = configuration.EnergyConfig.ConsumptionRate
+                EnergyLevel = configuration.EnergyConfig.InitialEnergyLevel,
             });
 
             SetPhysicsForPrototype(entityManager, prototype);

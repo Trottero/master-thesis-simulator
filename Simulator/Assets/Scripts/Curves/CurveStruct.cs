@@ -50,4 +50,10 @@ namespace Simulator.Curves
         public BlobAssetReference<CurveStruct> CurveReference { get; set; }
         public readonly float Evaluate(float time) => CurveReference.Value.GetValueAtTime(time);
     }
+
+    public struct EnergyCurveReference : ICurveReference
+    {
+        public BlobAssetReference<CurveStruct> CurveReference { get; set; }
+        public readonly float Evaluate(float time) => CurveReference.Value.GetValueAtTime(time);
+    }
 }
