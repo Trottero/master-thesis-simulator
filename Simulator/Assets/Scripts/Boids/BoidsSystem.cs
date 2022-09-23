@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
+using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Transforms;
-using UnityEngine;
-
 using Simulator.Curves;
 using Unity.Physics;
 using Simulator.Boids.Energy.Producers;
-using Simulator.Utils;
 
 namespace Simulator.Boids
 {
@@ -55,23 +52,20 @@ namespace Simulator.Boids
             var boidCount = boid_location_query.CalculateEntityCount();
 
             NativeArray<BoidProperties> boidPositions = new NativeArray<BoidProperties>(boidCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-
             var copyLocationsJob = new CopyLocationsJob
             {
                 BoidLocations = boidPositions
             };
-
             var copyLocationsJobHandle = copyLocationsJob.ScheduleParallel(boid_location_query, Dependency);
 
             var foodSourceCount = food_source_query.CalculateEntityCount();
             NativeArray<LocalToWorld> foodSourcePositions = new NativeArray<LocalToWorld>(foodSourceCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             var copyFoodSourceLocationsJob = new CopyLocalToWorldJob
             {
-                LocalToWorlds = foodSourcePositions
+                NativeArray = foodSourcePositions
             };
             var copyFoodSourceLocationsJobHandle = copyFoodSourceLocationsJob.ScheduleParallel(food_source_query, copyLocationsJobHandle);
 
-            
 
             var bj = new ComputeOptimalDirectionJob
             {
