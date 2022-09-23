@@ -2,17 +2,20 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
+using Simulator.Boids.Energy.Producers;
 
 namespace Simulator.Utils
 {
     [BurstCompile]
-    public partial struct CopyLocalToWorldJob : IJobEntity
+    public partial struct CopyFoodSourceLocationsJob : IJobEntity
     {
-        [WriteOnly] public NativeArray<LocalToWorld> NativeArray;
+        [WriteOnly] public NativeArray<LocalToWorld> Locations;
+        [WriteOnly] public NativeArray<FoodSourceComponent> ProducerComponents;
 
-        void Execute([EntityInQueryIndex] int entityInQueryIndex, in LocalToWorld transform)
+        void Execute([EntityInQueryIndex] int entityInQueryIndex, in LocalToWorld transform, in FoodSourceComponent producer)
         {
-            NativeArray[entityInQueryIndex] = transform;
+            Locations[entityInQueryIndex] = transform;
+            ProducerComponents[entityInQueryIndex] = producer;
         }
     }
 }

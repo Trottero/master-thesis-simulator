@@ -9,7 +9,7 @@ namespace Simulator.Boids.Energy.Producers
         public float EnergyLevel;
         public float RegenarationRate;
         public float MaxEnergyLevel;
-        public float FeedingRadius => 1f;
+        public float FeedingRadius;
         public float EffectiveSize => EnergyLevel == 0 ? 0 : (EnergyLevel / 10f);
     }
 }

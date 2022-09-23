@@ -173,5 +173,6 @@ namespace Simulator.Boids
     {
         public float InitialEnergyLevel;
         public float ConsumptionRate;
+        public float AssimilationRate;
     }
 }
