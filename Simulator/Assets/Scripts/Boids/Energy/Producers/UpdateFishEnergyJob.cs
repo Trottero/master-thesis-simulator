@@ -23,23 +23,8 @@ namespace Simulator.Boids.Energy.Producers
                     continue;
                 }
                 var foodSourceLocation = FoodSourceLocations[i];
-                float distance = 0;
-                if (boidLocation.Position.y >= foodSourceLocation.Position.y && boidLocation.Position.y <= foodSourceLocation.Position.y + foodSource.EffectiveSize)
-                {
-                    // Ignore y for distance calculation
-                    distance = math.distance(new float3(boidLocation.Position.x, 0, boidLocation.Position.z), new float3(foodSourceLocation.Position.x, 0, foodSourceLocation.Position.z));
-                }
-                if (boidLocation.Position.y > foodSourceLocation.Position.y + foodSource.EffectiveSize)
-                {
-                    // Larger than top
-                    distance = math.distance(boidLocation.Position, new float3(foodSourceLocation.Position.x, foodSourceLocation.Position.y + foodSource.EffectiveSize, foodSourceLocation.Position.z));
-                }
-                if (boidLocation.Position.y < foodSourceLocation.Position.y)
-                {
-                    // Smaller than bottom
-                    distance = math.distance(boidLocation.Position, foodSourceLocation.Position);
-                }
 
+                float distance = foodSource.EffectiveDistance(boidLocation.Position, foodSourceLocation.Position);
                 if (distance < 1f)
                 {
                     // Assimilation rate is 1f
