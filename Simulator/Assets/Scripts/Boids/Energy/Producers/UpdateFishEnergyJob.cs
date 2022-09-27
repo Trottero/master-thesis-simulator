@@ -40,7 +40,7 @@ namespace Simulator.Boids.Energy.Producers
                     distance = math.distance(boidLocation.Position, foodSourceLocation.Position);
                 }
 
-                if (distance < 5f)
+                if (distance < 1f)
                 {
                     // Assimilation rate is 1f
                     float consumed = EnergyConfig.AssimilationRate * DeltaTime;
@@ -49,6 +49,7 @@ namespace Simulator.Boids.Energy.Producers
                     // Remove energy from food source
                     foodSource.EnergyLevel -= consumed;
                 }
+                FoodSourceInformation[i] = foodSource;
             }
         }
     }

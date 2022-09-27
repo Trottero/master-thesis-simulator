@@ -100,6 +100,12 @@ namespace Simulator.Boids
                 EnergyConfig = controller.configuration.EnergyConfig
             }.Schedule(boid_energy_query, copyFoodSourceLocationsJobHandle).Complete();
 
+            // Update the food sources
+            new UpdateFoodSourceEnergyJob
+            {
+                FoodSourceInformation = foodSourceInformation
+            }.Schedule(food_source_query).Complete();
+
             boidPositions.Dispose(Dependency);
             foodSourcePositions.Dispose(Dependency);
             foodSourceInformation.Dispose(Dependency);

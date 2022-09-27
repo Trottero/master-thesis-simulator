@@ -234,7 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CageSize: 10
-  SwarmSize: 1000
+  SwarmSize: 100
   BoidMesh: {fileID: -5495902117074765545, guid: 4e959259a1474304b9693007c6f40237, type: 3}
   BoidMaterial: {fileID: 2100000, guid: b69f1e29331ed4c41a766fd13baf5e08, type: 2}
   configuration:
@@ -249,7 +249,8 @@ MonoBehaviour:
       FoodSourceWeight: 1
     EnergyConfig:
       InitialEnergyLevel: 10
-      ConsumptionRate: 1
+      ConsumptionRate: 0.1
+      AssimilationRate: 0.15
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0
