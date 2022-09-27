@@ -4,6 +4,7 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
 using Simulator.Curves;
+using Simulator.Boids.Energy.Producers;
 
 namespace Simulator.Boids
 {
@@ -12,6 +13,8 @@ namespace Simulator.Boids
     {
         [ReadOnly] public NativeArray<BoidProperties> OtherBoids;
         [ReadOnly] public NativeArray<LocalToWorld> FoodSources;
+        [ReadOnly] public NativeArray<FoodSourceComponent> FoodSourceInformation;
+
         [ReadOnly] public BoidsConfiguration config;
 
         void Execute(
@@ -72,17 +75,18 @@ namespace Simulator.Boids
             math.normalizesafe(localToWorld.Forward));
         }
 
-        float3 GetClosestFoodSource(float3 position)
+        float3 GetClosestFoodSource(float3 boidPosition)
         {
             float3 closestFoodSource = float3.zero;
             float closestDistance = float.MaxValue;
             for (int i = 0; i < FoodSources.Length; i++)
             {
-                var distance = math.distance(position, FoodSources[i].Position);
+                var effectivePosition = FoodSourceInformation[i].EffectivePosition(boidPosition, FoodSources[i].Position);
+                var distance = math.distance(boidPosition, effectivePosition) / FoodSourceInformation[i].EnergyLevel;
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestFoodSource = FoodSources[i].Position;
+                    closestFoodSource = effectivePosition;
                 }
             }
 

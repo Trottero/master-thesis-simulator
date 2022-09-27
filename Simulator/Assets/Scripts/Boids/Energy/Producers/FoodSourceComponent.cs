@@ -20,8 +20,8 @@ namespace Simulator.Boids.Energy.Producers
 
         public float3 EffectivePosition(float3 position, float3 foodpos)
         {
-            // Boid above food source
-            if ((position.y - foodpos.y) < 0)
+            // Check if boid is below foodpos
+            if (position.y < foodpos.y)
             {
                 return foodpos;
             }
@@ -32,7 +32,7 @@ namespace Simulator.Boids.Energy.Producers
                 return new float3(foodpos.x, foodpos.y + EffectiveSize, foodpos.z);
             }
 
-            // Use y for position calculation
+            // Use boid y for effective position
             return new float3(foodpos.x, position.y, foodpos.z);
         }
     }

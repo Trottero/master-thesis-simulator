@@ -79,7 +79,8 @@ namespace Simulator.Boids
             {
                 OtherBoids = boidPositions,
                 config = controller.configuration.BoidConfig,
-                FoodSources = foodSourcePositions
+                FoodSources = foodSourcePositions,
+                FoodSourceInformation = foodSourceInformation
             };
             var boidJobHandle = bj.ScheduleParallel(boid_query, copyFoodSourceLocationsJobHandle);
 
