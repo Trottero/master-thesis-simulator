@@ -239,7 +239,7 @@ MonoBehaviour:
   BoidMaterial: {fileID: 2100000, guid: b69f1e29331ed4c41a766fd13baf5e08, type: 2}
   configuration:
     BoidConfig:
-      Speed: 2
+      Speed: 1
       RotationSpeed: 360
       PerceptionRange: 10
       SeperationWeight: 1
@@ -749,6 +749,7 @@ GameObject:
   - component: {fileID: 1767145547}
   - component: {fileID: 1767145549}
   - component: {fileID: 1767145548}
+  - component: {fileID: 1767145550}
   m_Layer: 0
   m_Name: BoidGraphs
   m_TagString: Untagged
@@ -764,7 +765,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1767145545}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.081215, y: -6.861758, z: 8.467225}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -887,6 +888,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc6b476a58ae61643a5551917c04b403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1767145550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767145545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c1d51679a5fb548afe485003d514fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Config:
+    UpdatesPerSecond: 30
+    MaxSimulationSpeed: 2
 --- !u!1001 &1909313184
 PrefabInstance:
   m_ObjectHideFlags: 0

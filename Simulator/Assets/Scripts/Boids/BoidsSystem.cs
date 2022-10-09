@@ -7,6 +7,8 @@ using Simulator.Curves;
 using Unity.Physics;
 using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy;
+using Simulator.Configuration;
+using Unity.Physics.Systems;
 
 namespace Simulator.Boids
 {
@@ -19,6 +21,10 @@ namespace Simulator.Boids
         EntityQuery boid_displacement_query;
         EntityQuery food_source_query;
         private BoidController controller;
+        private Entity _gameControllerEntity;
+
+        private SimulationConfigurationComponent _simulationConfiguration;
+
         protected override void OnCreate()
         {
             boid_query = GetEntityQuery(
@@ -46,6 +52,16 @@ namespace Simulator.Boids
             food_source_query = GetEntityQuery(
                 ComponentType.ReadWrite<FoodSourceComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>());
+        }
+
+        protected override void OnStartRunning()
+        {
+            base.OnStartRunning();
+            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
+            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+
+            var system = World.GetOrCreateSystem<FixedStepSimulationSystemGroup>();
+            system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
         protected override void OnUpdate()
@@ -86,19 +102,20 @@ namespace Simulator.Boids
 
             var updateBoidJob = new UpdateBoidLocationJob
             {
-                DeltaTime = Time.DeltaTime,
-                config = controller.configuration.BoidConfig
+                config = controller.configuration.BoidConfig,
+                simulationConfig = _simulationConfiguration
             };
+
             var updateBoidJobHandle = updateBoidJob.ScheduleParallel(boid_displacement_query, boidJobHandle);
             updateBoidJobHandle.Complete();
 
             // Update the energy when close to things
             new UpdateFishEnergyJob
             {
-                DeltaTime = Time.DeltaTime,
                 FoodSourceInformation = foodSourceInformation,
                 FoodSourceLocations = foodSourcePositions,
-                EnergyConfig = controller.configuration.EnergyConfig
+                EnergyConfig = controller.configuration.EnergyConfig,
+                SimulationConfig = _simulationConfiguration
             }.Schedule(boid_energy_query, copyFoodSourceLocationsJobHandle).Complete();
 
             // Update the food sources

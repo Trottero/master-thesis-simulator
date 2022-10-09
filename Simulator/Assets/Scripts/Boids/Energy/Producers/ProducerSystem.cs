@@ -1,3 +1,5 @@
+using Simulator.Configuration;
+using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -11,9 +13,19 @@ namespace Simulator.Boids.Energy.Producers
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class ProducerSystem : SystemBase
     {
+
+        private SimulationConfigurationComponent _simulationConfiguration;
+
+        protected override void OnStartRunning()
+        {
+            base.OnStartRunning();
+            var _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
+            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+        }
+
         protected override void OnUpdate()
         {
-            var dt = Time.fixedDeltaTime;
+            var dt = _simulationConfiguration.UpdateInterval;
 
             // Regnerate
             Entities.WithAll<FoodSourceComponent>().ForEach((ref FoodSourceComponent foodSource) =>

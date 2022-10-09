@@ -20,7 +20,7 @@ namespace Simulator.Boids
 
         [SerializeField] public Mesh BoidMesh;
         [SerializeField] public UnityEngine.Material BoidMaterial;
-        [SerializeField] public SimulationConfiguration configuration;
+        [SerializeField] public GlobalConfiguration configuration;
 
         public static BoidController Instance;
 
@@ -149,7 +149,7 @@ namespace Simulator.Boids
 
 
     [Serializable]
-    public class SimulationConfiguration
+    public class GlobalConfiguration
     {
         public BoidsConfiguration BoidConfig;
         public EnergyConfiguration EnergyConfig;

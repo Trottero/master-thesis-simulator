@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
 using Unity.Mathematics;
+using Simulator.Configuration;
 
 namespace Simulator.Boids.Energy.Producers
 {
@@ -11,8 +12,7 @@ namespace Simulator.Boids.Energy.Producers
         public NativeArray<FoodSourceComponent> FoodSourceInformation;
         public NativeArray<LocalToWorld> FoodSourceLocations;
         public EnergyConfiguration EnergyConfig;
-        public float DeltaTime;
-
+        public SimulationConfigurationComponent SimulationConfig;
         void Execute(ref EnergyComponent boidEnergy, in LocalToWorld boidLocation)
         {
             for (int i = 0; i < FoodSourceInformation.Length; i++)
@@ -28,7 +28,7 @@ namespace Simulator.Boids.Energy.Producers
                 if (distance < 1f)
                 {
                     // Assimilation rate is 1f
-                    float consumed = EnergyConfig.AssimilationRate * DeltaTime;
+                    float consumed = EnergyConfig.AssimilationRate * SimulationConfig.UpdateInterval;
                     // Add energy to boid
                     boidEnergy.EnergyLevel += consumed;
                     // Remove energy from food source

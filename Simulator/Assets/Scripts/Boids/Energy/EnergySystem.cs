@@ -1,3 +1,5 @@
+using Simulator.Configuration;
+using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Rendering;
@@ -9,6 +11,14 @@ namespace Simulator.Boids.Energy
     public partial class EnergySystem : SystemBase
     {
         private BoidController controller;
+        private SimulationConfigurationComponent _simulationConfiguration;
+
+        protected override void OnStartRunning()
+        {
+            base.OnStartRunning();
+            var _controller = GetSingletonEntity<BoidControllerTag>();
+            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_controller);
+        }
 
         protected override void OnUpdate()
         {
@@ -18,7 +28,7 @@ namespace Simulator.Boids.Energy
                 return;
             }
 
-            var dt = Time.fixedDeltaTime;
+            var dt = _simulationConfiguration.UpdateInterval;
             var cr = controller.configuration.EnergyConfig.ConsumptionRate;
 
             // Update energy level
