@@ -11,7 +11,7 @@ namespace Simulator.Statistics
         public StatisticWriter(string simulationId)
         {
             _simulationId = simulationId;
-            _dir = Path.Combine(Application.persistentDataPath, "Simulation");
+            _dir = Path.Combine(Application.dataPath, "SimulationResults");
             Directory.CreateDirectory(_dir);
 
             _filepath = Path.Combine(_dir, $"{_simulationId}.csv");

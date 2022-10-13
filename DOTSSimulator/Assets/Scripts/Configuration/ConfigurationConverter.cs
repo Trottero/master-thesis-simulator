@@ -26,7 +26,7 @@ namespace Simulator.Configuration
                 MaxSimulationSpeed = Config.MaxSimulationSpeed
             };
 
-            Debug.Log($"Configuration: {configuration.UpdatesPerSecond} {configuration.UpdateInterval} {configuration.MaxSimulationSpeed}");
+            Debug.Log($"Current Configuration: UpdatesPerSecond: {Config.UpdatesPerSecond}, MaxSimulationSpeed: {Config.MaxSimulationSpeed}");
 
             dstManager.AddComponentData(entity, configuration);
         }
