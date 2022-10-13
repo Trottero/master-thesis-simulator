@@ -294,7 +294,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     CohesionWeight: 1
-    CohesionMultiplier: 1
     AlignmentCurve:
       serializedVersion: 2
       m_Curve:
@@ -320,7 +319,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     AlignmentWeight: 1
-    AlignmentMultiplier: 1
     SeparationCurve:
       serializedVersion: 2
       m_Curve:
@@ -346,7 +344,6 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     SeparationWeight: 5
-    SeparationMultiplier: 1
   NavigationSettings:
     EvasionCurve:
       serializedVersion: 2
@@ -414,7 +411,7 @@ MonoBehaviour:
     MaxEnergy: 100
     EnergyLossPerSecond: 1
   prefab: {fileID: 8406555299771655406, guid: 35e798aa94348f44088dde3c143dac80, type: 3}
-  SwarmSize: 200
+  SwarmSize: 100
   Fish: []
 --- !u!1 &702684032
 GameObject:
