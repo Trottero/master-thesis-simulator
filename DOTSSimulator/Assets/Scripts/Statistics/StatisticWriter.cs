@@ -8,7 +8,7 @@ namespace Simulator.Statistics
         private readonly string _simulationId;
         private readonly string _dir;
         private readonly string _filepath;
-        public StatisticWriter(string simulationId)
+        public StatisticWriter(string simulationId, string[] headers)
         {
             _simulationId = simulationId;
             _dir = Path.Combine(Application.dataPath, "SimulationResults");
@@ -18,11 +18,11 @@ namespace Simulator.Statistics
             Debug.Log($"Writing statistics to {_filepath}");
             if (!File.Exists(_filepath))
             {
-                Write("Step", "BoidCount", "AvgEnergy");
+                Write(headers);
             }
         }
 
-        public void Write(params object[] values)
+        public void Write(string[] values)
         {
             var line = string.Join(",", values);
             File.AppendAllText(_filepath, line + "\n");
