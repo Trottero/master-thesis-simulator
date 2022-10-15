@@ -33,7 +33,8 @@ namespace Simulator.Statistics
             Metrics.NumberOfBoids,
             Metrics.NumberOfFoodSources,
             Metrics.TotalFoodAvailable,
-            Metrics.Polarization
+            Metrics.Polarization,
+            Metrics.Expanse
         };
 
         private Entity _statisticEntity;

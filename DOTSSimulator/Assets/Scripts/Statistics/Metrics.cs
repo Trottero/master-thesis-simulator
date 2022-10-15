@@ -127,5 +127,43 @@ namespace Simulator.Statistics
                 stat.Value /= stat.Query.CalculateEntityCount();
             }
         };
+
+        // Compute the distance to the average center of the school of fish.
+        // Andreas Huth and Christian Wissel 1992
+        public static readonly Statistic Expanse = new Statistic
+        {
+            Name = "Expanse",
+            Init = (statisticSystem, statistic) =>
+            {
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent), typeof(Translation));
+            },
+            PreAggregator = (statisticSystem, statistic) =>
+            {
+                statistic.Value = 0f;
+                // Loop over all of the entities satisfying the query and take their translation
+                // and add it to the statistic bag.
+                var avgpos = float3.zero;
+                var translations = statistic.Query.ToComponentDataArray<Translation>(Allocator.TempJob);
+                foreach (var translation in translations)
+                {
+                    avgpos += translation.Value;
+                }
+
+                statistic.StatisticBag["avgpos"] = avgpos / (float)translations.Length;
+
+                translations.Dispose();
+            },
+            Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
+            {
+                var translation = system.GetComponent<Translation>(e);
+                var avgpos = (float3)stat.StatisticBag["avgpos"];
+                var distance = math.distance(translation.Value, avgpos);
+                stat.Value += distance;
+            },
+            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            {
+                stat.Value /= stat.Query.CalculateEntityCount();
+            }
+        };
     }
 }
