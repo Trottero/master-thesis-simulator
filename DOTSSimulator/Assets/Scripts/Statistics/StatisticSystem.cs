@@ -14,6 +14,7 @@ namespace Simulator.Statistics
         public EntityQuery Query;
         public string Name;
         public float Value;
+        public Dictionary<string, object> StatisticBag = new Dictionary<string, object>();
         public Action<StatisticSystem, Statistic> Init;
         public Action<StatisticSystem, Statistic> PreAggregator;
         public Action<StatisticSystem, Statistic, Entity> Aggregator;
@@ -29,7 +30,10 @@ namespace Simulator.Statistics
         {
             Metrics.StatisticStep,
             Metrics.AverageEnergy,
-            Metrics.NumberOfBoids
+            Metrics.NumberOfBoids,
+            Metrics.NumberOfFoodSources,
+            Metrics.TotalFoodAvailable,
+            Metrics.Polarization
         };
 
         private Entity _statisticEntity;
