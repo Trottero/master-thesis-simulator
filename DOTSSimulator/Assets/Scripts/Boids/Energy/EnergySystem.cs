@@ -11,13 +11,17 @@ namespace Simulator.Boids.Energy
     public partial class EnergySystem : SystemBase
     {
         private BoidController controller;
+        private Entity _gameControllerEntity;
         private SimulationConfigurationComponent _simulationConfiguration;
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            var _controller = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_controller);
+            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
+            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+
+            var system = World.GetOrCreateSystem<FixedStepSimulationSystemGroup>();
+            system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
         protected override void OnUpdate()
