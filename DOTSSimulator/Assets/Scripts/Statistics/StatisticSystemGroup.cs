@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Simulator.Statistics
 {
     // StatisticSystemGroup runs very infrequently
     // It is used to collect statistics about the simulation
-    public class StatisticSystemGroup : FixedStepSimulationSystemGroup
+    public class StatisticSystemGroup : ComponentSystemGroup
     {
-        protected override void OnCreate()
+        [Preserve]
+        public StatisticSystemGroup()
         {
-            base.OnCreate();
-            Timestep = 1f;
+            RateManager = new RateUtils.FixedRateCatchUpManager(1f);
         }
     }
 }
