@@ -16,11 +16,16 @@ namespace Simulator.Boids.Energy.Producers
 
         private SimulationConfigurationComponent _simulationConfiguration;
 
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            RequireForUpdate<SimulationConfigurationComponent>();
+        }
+
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            var _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
         }
 
         protected override void OnUpdate()
@@ -34,9 +39,9 @@ namespace Simulator.Boids.Energy.Producers
             }).ScheduleParallel();
 
             // Let scale reflect energy level
-            Entities.WithAll<FoodSourceComponent, LocalToWorld>().ForEach((ref FoodSourceComponent foodSource, ref LocalToWorld scale) =>
+            Entities.WithAll<FoodSourceComponent, PostTransformScale>().ForEach((ref PostTransformScale scale, in FoodSourceComponent foodSource) =>
             {
-                scale.Value = Matrix4x4.TRS(scale.Position, scale.Rotation, new float3(1, foodSource.EffectiveSize, 1));
+                scale.Value = float3x3.Scale(new float3(1, foodSource.EffectiveSize, 1));
             }).ScheduleParallel();
         }
 

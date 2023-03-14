@@ -7,6 +7,7 @@ using Simulator.Configuration;
 
 namespace Simulator.Boids.Energy.Producers
 {
+    [BurstCompile]
     public partial struct UpdateFishEnergyJob : IJobEntity
     {
         public NativeArray<FoodSourceComponent> FoodSourceInformation;

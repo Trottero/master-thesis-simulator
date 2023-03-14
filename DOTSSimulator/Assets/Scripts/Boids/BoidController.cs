@@ -6,6 +6,7 @@ using Unity.Physics;
 using Collider = Unity.Physics.Collider;
 using Simulator.Boids.Energy;
 using Unity.Collections;
+using Simulator.Boids.Lifecycle;
 
 namespace Simulator.Boids
 {
@@ -19,23 +20,26 @@ namespace Simulator.Boids
         [SerializeField] public UnityEngine.Material BoidMaterial;
         [SerializeField] public GlobalConfiguration configuration;
 
-        public static BoidController Instance;
+        public static BoidController Instance = null;
 
         void Awake()
         {
             Instance = this;
+        }
 
-            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        void Start()
+        {
+            // Debug.Log("Starting BoidController");
+            // var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-            var prototype = BoidSpawningHelper.SpawnPrototype(entityManager);
+            // Debug.Log("Attempting to spawn prototype");
+            // var prototype = BoidSpawningHelper.SpawnPrototype(entityManager);
 
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            BoidSpawningHelper.SpawnBoids(ecb, prototype, SwarmSize, CageSize);
+            // var ecb = new EntityCommandBuffer(Allocator.Persistent);
+            // BoidSpawningHelper.SpawnBoids(ecb, prototype, SwarmSize, CageSize);
 
-            ecb.Playback(entityManager);
-            ecb.Dispose();
-
-            entityManager.DestroyEntity(prototype);
+            // ecb.Playback(entityManager);
+            // ecb.Dispose();
         }
 
         void OnDrawGizmos()

@@ -6,28 +6,19 @@ using Unity.Jobs;
 
 namespace Simulator.Boids
 {
-    [BurstCompatible]
-    public struct SpawnBoidsJob : IJobEntity
+    public struct SpawnBoidsJob : IJobParallelFor
     {
         public Entity Prototype;
         public int EntityCount;
         public EntityCommandBuffer.ParallelWriter Ecb;
         public float CageSize;
 
-        public void Execute([EntityInQueryIndex] int index)
+        public void Execute(int index)
         {
             var e = Ecb.Instantiate(index, Prototype);
             var rng = new System.Random(index);
 
-            Ecb.SetComponent(index, e, new Rotation
-            {
-                Value = RandomRotation(rng)
-            });
-
-            Ecb.SetComponent(index, e, new Translation
-            {
-                Value = RandomPosition(rng)
-            });
+            Ecb.SetComponent(index, e, LocalTransform.FromPositionRotation(RandomPosition(rng), RandomRotation(rng)));
         }
 
         private float3 RandomPosition(System.Random rng)

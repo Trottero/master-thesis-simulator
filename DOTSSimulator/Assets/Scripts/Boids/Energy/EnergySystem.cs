@@ -11,16 +11,23 @@ namespace Simulator.Boids.Energy
     public partial class EnergySystem : SystemBase
     {
         private BoidController controller;
-        private Entity _gameControllerEntity;
         private SimulationConfigurationComponent _simulationConfiguration;
+
+        private EntityQuery _noEnergyQuery;
+
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            _noEnergyQuery = GetEntityQuery(typeof(NoEnergyComponent));
+            RequireForUpdate<SimulationConfigurationComponent>();
+        }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
 
-            var system = World.GetOrCreateSystem<FixedStepSimulationSystemGroup>();
+            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
             system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
@@ -53,7 +60,12 @@ namespace Simulator.Boids.Energy
                     }
                 }).Run();
 
-            ecb.DestroyEntitiesForEntityQuery(GetEntityQuery(typeof(NoEnergyComponent)));
+            if (_noEnergyQuery.CalculateEntityCount() > 0)
+            {
+                Debug.Log("Destroying " + _noEnergyQuery.CalculateEntityCount() + " entities");
+            }
+
+            ecb.DestroyEntity(_noEnergyQuery);
             ecb.Playback(EntityManager);
             ecb.Dispose();
 

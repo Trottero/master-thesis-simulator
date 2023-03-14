@@ -10,7 +10,7 @@ namespace Simulator.Boids
     {
         [WriteOnly] public NativeArray<BoidProperties> BoidLocations;
 
-        void Execute([EntityInQueryIndex] int entityInQueryIndex, in LocalToWorld transform)
+        void Execute([EntityIndexInQuery] int entityInQueryIndex, in LocalToWorld transform)
         {
             BoidLocations[entityInQueryIndex] = new BoidProperties
             {

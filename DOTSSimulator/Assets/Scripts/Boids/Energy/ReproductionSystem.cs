@@ -19,16 +19,18 @@ namespace Simulator.Boids.Energy
 
         protected override void OnCreate()
         {
+            base.OnCreate();
+
             _shouldReproduceQuery = GetEntityQuery(ComponentType.ReadOnly<ShouldReproduceComponent>());
+            RequireForUpdate<SimulationConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
 
-            var system = World.GetOrCreateSystem<FixedStepSimulationSystemGroup>();
+            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
             system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 

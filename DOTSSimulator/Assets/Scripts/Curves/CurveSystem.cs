@@ -12,9 +12,15 @@ namespace Simulator.Curves
     {
         private Entity _gameControllerEntity;
 
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            RequireForUpdate<BoidControllerTagComponent>();
+        }
+
         protected override void OnStartRunning()
         {
-            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
+            _gameControllerEntity = SystemAPI.GetSingletonEntity<BoidControllerTagComponent>();
         }
 
         protected override void OnUpdate()
@@ -30,9 +36,9 @@ namespace Simulator.Curves
                     ecb.AddComponent<CohesionCurveReference>(e);
                     ecb.AddComponent<AlignmentCurveReference>(e);
 
-                    var separationCurveReference = GetComponent<SeparationCurveReference>(gameControllerEntity);
-                    var cohesionCurveReference = GetComponent<CohesionCurveReference>(gameControllerEntity);
-                    var alignmentCurveReference = GetComponent<AlignmentCurveReference>(gameControllerEntity);
+                    var separationCurveReference = SystemAPI.GetComponent<SeparationCurveReference>(gameControllerEntity);
+                    var cohesionCurveReference = SystemAPI.GetComponent<CohesionCurveReference>(gameControllerEntity);
+                    var alignmentCurveReference = SystemAPI.GetComponent<AlignmentCurveReference>(gameControllerEntity);
 
                     ecb.SetComponent(e, separationCurveReference);
                     ecb.SetComponent(e, cohesionCurveReference);

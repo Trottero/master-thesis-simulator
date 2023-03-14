@@ -12,7 +12,7 @@ namespace Simulator.Utils
         [WriteOnly] public NativeArray<LocalToWorld> Locations;
         [WriteOnly] public NativeArray<FoodSourceComponent> ProducerComponents;
 
-        void Execute([EntityInQueryIndex] int entityInQueryIndex, in LocalToWorld transform, in FoodSourceComponent producer)
+        void Execute([EntityIndexInQuery] int entityInQueryIndex, in LocalToWorld transform, in FoodSourceComponent producer)
         {
             Locations[entityInQueryIndex] = transform;
             ProducerComponents[entityInQueryIndex] = producer;

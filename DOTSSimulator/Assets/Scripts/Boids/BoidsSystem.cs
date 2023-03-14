@@ -52,15 +52,16 @@ namespace Simulator.Boids
             food_source_query = GetEntityQuery(
                 ComponentType.ReadWrite<FoodSourceComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>());
+
+            RequireForUpdate<SimulationConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
+            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
 
-            var system = World.GetOrCreateSystem<FixedStepSimulationSystemGroup>();
+            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
             system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
@@ -71,6 +72,7 @@ namespace Simulator.Boids
                 controller = BoidController.Instance;
                 return;
             }
+
 
             var boidCount = boid_location_query.CalculateEntityCount();
 
@@ -122,7 +124,7 @@ namespace Simulator.Boids
             new UpdateFoodSourceEnergyJob
             {
                 FoodSourceInformation = foodSourceInformation
-            }.Schedule(food_source_query).Complete();
+            }.Schedule(food_source_query, Dependency).Complete();
 
             boidPositions.Dispose(Dependency);
             foodSourcePositions.Dispose(Dependency);

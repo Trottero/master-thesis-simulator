@@ -20,7 +20,7 @@ namespace Simulator.Statistics
             },
             Aggregator = (statisticSystem, statistic, entity) =>
             {
-                var step = statisticSystem.GetComponent<StatisticComponentData>(entity);
+                var step = statisticSystem.EntityManager.GetComponentData<StatisticComponentData>(entity);
                 statistic.Value = step.Step;
             }
         };
@@ -38,7 +38,7 @@ namespace Simulator.Statistics
             },
             Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
             {
-                stat.Value += system.GetComponent<EnergyComponent>(e).EnergyLevel;
+                stat.Value += system.EntityManager.GetComponentData<EnergyComponent>(e).EnergyLevel;
             },
             PostAggregator = (StatisticSystem system, Statistic stat) =>
             {
@@ -85,7 +85,7 @@ namespace Simulator.Statistics
             },
             Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
             {
-                stat.Value += system.GetComponent<FoodSourceComponent>(e).EnergyLevel;
+                stat.Value += system.EntityManager.GetComponentData<FoodSourceComponent>(e).EnergyLevel;
             }
         };
 
@@ -96,7 +96,7 @@ namespace Simulator.Statistics
             Name = "Polarization",
             Init = (statisticSystem, statistic) =>
             {
-                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent), typeof(Rotation));
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent), typeof(LocalTransform));
             },
             PreAggregator = (statisticSystem, statistic) =>
             {
@@ -104,10 +104,10 @@ namespace Simulator.Statistics
                 // Loop over all of the entities satisfying the query and take their rotation
                 // and add it to the statistic bag.
                 var avgangle = float3.zero;
-                var rotations = statistic.Query.ToComponentDataArray<Rotation>(Allocator.TempJob);
+                var rotations = statistic.Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
                 foreach (var rotation in rotations)
                 {
-                    avgangle += math.forward(rotation.Value);
+                    avgangle += math.forward(rotation.Rotation);
                 }
 
                 statistic.StatisticBag["avgdirection"] = avgangle / (float)rotations.Length;
@@ -116,9 +116,9 @@ namespace Simulator.Statistics
             },
             Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
             {
-                var rotation = system.GetComponent<Rotation>(e);
+                var rotation = system.EntityManager.GetComponentData<LocalTransform>(e);
                 var schoolangle = (float3)stat.StatisticBag["avgdirection"];
-                var angle = math.dot(math.forward(rotation.Value), schoolangle);
+                var angle = math.dot(math.forward(rotation.Rotation), schoolangle);
                 // normalize difference to 0..1 where 1 is 180 degrees
                 stat.Value += (1f - angle) / 2f;
             },
@@ -135,7 +135,7 @@ namespace Simulator.Statistics
             Name = "Expanse",
             Init = (statisticSystem, statistic) =>
             {
-                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent), typeof(Translation));
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent), typeof(LocalTransform));
             },
             PreAggregator = (statisticSystem, statistic) =>
             {
@@ -143,10 +143,10 @@ namespace Simulator.Statistics
                 // Loop over all of the entities satisfying the query and take their translation
                 // and add it to the statistic bag.
                 var avgpos = float3.zero;
-                var translations = statistic.Query.ToComponentDataArray<Translation>(Allocator.TempJob);
+                var translations = statistic.Query.ToComponentDataArray<LocalTransform>(Allocator.TempJob);
                 foreach (var translation in translations)
                 {
-                    avgpos += translation.Value;
+                    avgpos += translation.Position;
                 }
 
                 statistic.StatisticBag["avgpos"] = avgpos / (float)translations.Length;
@@ -155,9 +155,9 @@ namespace Simulator.Statistics
             },
             Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
             {
-                var translation = system.GetComponent<Translation>(e);
+                var translation = system.EntityManager.GetComponentData<LocalTransform>(e);
                 var avgpos = (float3)stat.StatisticBag["avgpos"];
-                var distance = math.distance(translation.Value, avgpos);
+                var distance = math.distance(translation.Position, avgpos);
                 stat.Value += distance;
             },
             PostAggregator = (StatisticSystem system, Statistic stat) =>
