@@ -180,6 +180,10 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
+      propertyPath: RegenerationRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
       value: 50
       objectReference: {fileID: 0}
@@ -567,6 +571,10 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
+      propertyPath: RegenerationRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
       value: 50
       objectReference: {fileID: 0}
@@ -787,6 +795,10 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
+      propertyPath: RegenerationRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
       value: 50
       objectReference: {fileID: 0}
@@ -809,6 +821,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
+      propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
@@ -853,6 +869,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: RegenarationRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
+      propertyPath: RegenerationRate
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}

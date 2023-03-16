@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2031299625727837223}
   - component: {fileID: 2031299625727837222}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: FoodSourceMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,4 +151,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialEnergyLevel: 100
-  RegenarationRate: 100
+  RegenerationRate: 2
+  MaxEnergyLevel: 100

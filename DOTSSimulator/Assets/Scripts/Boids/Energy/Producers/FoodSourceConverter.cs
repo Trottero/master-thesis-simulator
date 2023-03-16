@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -10,8 +8,10 @@ namespace Simulator.Boids.Energy.Producers
     public class FoodSourceConverter : MonoBehaviour
     {
         public float InitialEnergyLevel = 100f;
-        public float RegenarationRate = 2f;
-        public float MaxEnergyLevel => 100f;
+
+        public float RegenerationRate = 2f;
+
+        public float MaxEnergyLevel = 100f;
     }
 
     public class FoodSourceConverterBaker : Baker<FoodSourceConverter>
@@ -21,12 +21,13 @@ namespace Simulator.Boids.Energy.Producers
             var foodSource = new FoodSourceComponent
             {
                 EnergyLevel = authoring.InitialEnergyLevel,
-                RegenarationRate = authoring.RegenarationRate,
+                RegenarationRate = authoring.RegenerationRate,
                 MaxEnergyLevel = authoring.MaxEnergyLevel
             };
 
             AddComponent(foodSource);
-            AddComponent(new PostTransformScale { Value = float3x3.Scale(new float3(1, foodSource.EffectiveSize, 1)) });
+            AddComponent(new PropagateLocalToWorld());
+            AddComponent(new WorldToLocal_Tag());
         }
     }
 }

@@ -14,10 +14,13 @@ namespace Simulator.Boids
     {
         [ReadOnly] public BoidsConfiguration config;
         [ReadOnly] public SimulationConfigurationComponent simulationConfig;
-        void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform, in PhysicsMass physicsMass, in BoidComponent boid)
+
+        void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform,
+            in PhysicsMass physicsMass, in BoidComponent boid)
         {
             var maxRot = math.radians(config.RotationSpeed);
-            var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward), boid.optimalDirection, maxRot * simulationConfig.UpdateInterval, 0f);
+            var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward),
+                boid.optimalDirection, maxRot * simulationConfig.UpdateInterval, 0f);
 
             physicsVelocity.Linear = adjustedRotation * config.Speed * simulationConfig.MaxSimulationSpeed;
 
@@ -26,7 +29,7 @@ namespace Simulator.Boids
             physicsVelocity.Angular = diff * simulationConfig.MaxSimulationSpeed;
         }
 
-        public float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)
+        private static float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)
         {
             float delta = math.acos(math.dot(current, target) / (math.length(current) * math.length(target)));
             float magDiff = math.length(target) - math.length(current);
@@ -34,15 +37,16 @@ namespace Simulator.Boids
             float maxMagDelta = math.min(maxMag, math.abs(magDiff));
             float diff = math.min(1f, maxRadsDelta / delta);
 
-            return float3Slerp(current, target, diff) * (math.length(current) + maxMagDelta * sign);
+            return Float3Slerp(current, target, diff) * (math.length(current) + maxMagDelta * sign);
         }
 
-        public float3 float3Slerp(float3 current, float3 target, float scale)
+        private static float3 Float3Slerp(float3 current, float3 target, float scale)
         {
             if (scale == 0f)
             {
                 return current;
             }
+
             if (scale == 1f)
             {
                 return target;
