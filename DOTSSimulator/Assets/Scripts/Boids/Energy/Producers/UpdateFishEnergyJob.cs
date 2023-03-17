@@ -11,9 +11,9 @@ namespace Simulator.Boids.Energy.Producers
     public partial struct UpdateFishEnergyJob : IJobEntity
     {
         public NativeArray<FoodSourceComponent> FoodSourceInformation;
-        public NativeArray<LocalToWorld> FoodSourceLocations;
-        public EnergyConfiguration EnergyConfig;
-        public SimulationConfigurationComponent SimulationConfig;
+        [ReadOnly] public NativeArray<LocalToWorld> FoodSourceLocations;
+        [ReadOnly] public EnergyConfiguration EnergyConfig;
+        [ReadOnly] public SimulationConfigurationComponent SimulationConfig;
 
         void Execute(ref EnergyComponent boidEnergy, in LocalToWorld boidLocation)
         {

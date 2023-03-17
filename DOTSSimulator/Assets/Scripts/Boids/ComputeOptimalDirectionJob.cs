@@ -15,7 +15,7 @@ namespace Simulator.Boids
         [ReadOnly] public NativeArray<LocalToWorld> FoodSources;
         [ReadOnly] public NativeArray<FoodSourceComponent> FoodSourceInformation;
 
-        [ReadOnly] public BoidsConfiguration config;
+        [ReadOnly] public BoidsConfiguration Config;
 
         void Execute(
             ref BoidComponent boid,
@@ -34,9 +34,9 @@ namespace Simulator.Boids
             {
                 // Calculate optimal direction here :)
                 var distance = math.distance(localToWorld.Position, OtherBoids[i].Position);
-                if (distance < config.PerceptionRange)
+                if (distance < Config.PerceptionRange)
                 {
-                    var distanceNormalized = distance / config.PerceptionRange;
+                    var distanceNormalized = distance / Config.PerceptionRange;
                     // calculate separation
                     separation -= (OtherBoids[i].Position - localToWorld.Position) *
                                   separationCurve.Evaluate(distanceNormalized);
@@ -63,32 +63,42 @@ namespace Simulator.Boids
                 stayInCube = math.normalizesafe(-localToWorld.Position);
             }
 
-            var foodSource = math.normalizesafe(GetClosestFoodSource(localToWorld.Position) - localToWorld.Position,
-                float3.zero);
+            var closestFoodIndex = GetClosestFoodSource(localToWorld.Position);
+            var closestFoodComponent = FoodSourceInformation[closestFoodIndex];
+            var closestFoodPosition = FoodSources[closestFoodIndex].Position;
 
+            var foodSource = float3.zero;
+            if (closestFoodComponent.EnergyLevel > 6f)
+            {
+                foodSource = math.normalizesafe(closestFoodPosition - localToWorld.Position, float3.zero);
+            }
 
-            boid.optimalDirection = math.normalizesafe(
-                config.AlignmentWeight * alignment +
-                config.CohesionWeight * cohesion +
-                config.SeperationWeight * separation +
-                config.StayInCubeWeight * stayInCube +
-                config.FoodSourceWeight * foodSource,
+            boid.OptimalDirection = math.normalizesafe(
+                Config.AlignmentWeight * alignment +
+                Config.CohesionWeight * cohesion +
+                Config.SeperationWeight * separation +
+                Config.StayInCubeWeight * stayInCube +
+                Config.FoodSourceWeight * foodSource,
                 math.normalizesafe(localToWorld.Forward));
         }
 
-        private float3 GetClosestFoodSource(float3 boidPosition)
+        private int GetClosestFoodSource(float3 boidPosition)
         {
-            var closestFoodSource = float3.zero;
+            var closestFoodSource = 0;
             var closestDistance = float.MaxValue;
             for (var i = 0; i < FoodSources.Length; i++)
             {
-                var effectivePosition =
-                    FoodSourceInformation[i].EffectivePosition(boidPosition, FoodSources[i].Position);
+                if (FoodSourceInformation[i].EnergyLevel < 6f)
+                {
+                    continue;
+                }
+
+                var effectivePosition = FoodSourceInformation[i].EffectivePosition(boidPosition, FoodSources[i].Position);
                 var distance = math.distance(boidPosition, effectivePosition) / FoodSourceInformation[i].EnergyLevel;
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;
-                    closestFoodSource = effectivePosition;
+                    closestFoodSource = i;
                 }
             }
 

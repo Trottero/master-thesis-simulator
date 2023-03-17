@@ -10,7 +10,7 @@ namespace Simulator.Boids.Energy
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class EnergySystem : SystemBase
     {
-        private BoidController controller;
+        private BoidController _controller;
         private SimulationConfigurationComponent _simulationConfiguration;
 
         private EntityQuery _noEnergyQuery;
@@ -33,24 +33,20 @@ namespace Simulator.Boids.Energy
 
         protected override void OnUpdate()
         {
-            if (!controller)
+            if (!_controller)
             {
-                controller = BoidController.Instance;
+                _controller = BoidController.Instance;
                 return;
             }
 
             var dt = _simulationConfiguration.UpdateInterval;
-            var cr = controller.configuration.EnergyConfig.ConsumptionRate;
+            var cr = _controller.configuration.EnergyConfig.ConsumptionRate;
 
             // Update energy level
-            Entities.WithAll<BoidComponent, RenderMesh, EnergyComponent>().WithoutBurst().ForEach((ref EnergyComponent energy) =>
-            {
-                energy.EnergyLevel -= controller.configuration.EnergyConfig.ConsumptionRate * dt;
-                // mesh.material.color = new Color(1f, 1f, 1f, energy.EnergyLevel);
-            }).Run();
+            Entities.WithAll<BoidComponent, EnergyComponent>()
+                .ForEach((ref EnergyComponent energy) => energy.EnergyLevel -= cr * dt).Run();
 
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
-
             // // Delete enties with energy level below 0
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<NoEnergyComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
                 {
@@ -59,11 +55,6 @@ namespace Simulator.Boids.Energy
                         ecb.AddComponent<NoEnergyComponent>(e);
                     }
                 }).Run();
-
-            if (_noEnergyQuery.CalculateEntityCount() > 0)
-            {
-                Debug.Log("Destroying " + _noEnergyQuery.CalculateEntityCount() + " entities");
-            }
 
             ecb.DestroyEntity(_noEnergyQuery);
             ecb.Playback(EntityManager);

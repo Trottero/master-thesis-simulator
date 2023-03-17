@@ -3,7 +3,6 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
-using Unity.Physics.Extensions;
 using Unity.Physics;
 using Simulator.Configuration;
 
@@ -12,21 +11,20 @@ namespace Simulator.Boids
     [BurstCompile]
     public partial struct UpdateBoidLocationJob : IJobEntity
     {
-        [ReadOnly] public BoidsConfiguration config;
-        [ReadOnly] public SimulationConfigurationComponent simulationConfig;
+        [ReadOnly] public BoidsConfiguration Config;
+        [ReadOnly] public SimulationConfigurationComponent SimulationConfig;
 
-        void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform,
-            in PhysicsMass physicsMass, in BoidComponent boid)
+        void Execute(ref PhysicsVelocity physicsVelocity, ref LocalToWorld transform, in BoidComponent boid)
         {
-            var maxRot = math.radians(config.RotationSpeed);
+            var maxRot = math.radians(Config.RotationSpeed);
             var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward),
-                boid.optimalDirection, maxRot * simulationConfig.UpdateInterval, 0f);
+                boid.OptimalDirection, maxRot * SimulationConfig.UpdateInterval, 0f);
 
-            physicsVelocity.Linear = adjustedRotation * config.Speed * simulationConfig.MaxSimulationSpeed;
+            physicsVelocity.Linear = adjustedRotation * Config.Speed * SimulationConfig.MaxSimulationSpeed;
 
             // This should force the boid to rotate towards the direction it wants to go.
-            var diff = boid.optimalDirection - transform.Forward;
-            physicsVelocity.Angular = diff * simulationConfig.MaxSimulationSpeed;
+            var diff = boid.OptimalDirection - transform.Forward;
+            physicsVelocity.Angular = diff * SimulationConfig.MaxSimulationSpeed;
         }
 
         private static float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)

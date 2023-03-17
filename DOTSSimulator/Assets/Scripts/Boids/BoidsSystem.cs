@@ -8,52 +8,52 @@ using Unity.Physics;
 using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy;
 using Simulator.Configuration;
-using Unity.Physics.Systems;
 
 namespace Simulator.Boids
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class BoidsSystem : SystemBase
     {
-        EntityQuery boid_query;
-        EntityQuery boid_location_query;
-        EntityQuery boid_energy_query;
-        EntityQuery boid_displacement_query;
-        EntityQuery food_source_query;
-        private BoidController controller;
+        private EntityQuery _boidQuery;
+        private EntityQuery _boidLocationQuery;
+        private EntityQuery _boidEnergyQuery;
+        private EntityQuery _boidDisplacementQuery;
+        private EntityQuery _foodSourceQuery;
+        private BoidController _controller;
         private Entity _gameControllerEntity;
 
         private SimulationConfigurationComponent _simulationConfiguration;
 
         protected override void OnCreate()
         {
-            boid_query = GetEntityQuery(
+            _boidQuery = GetEntityQuery(
                 ComponentType.ReadWrite<BoidComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>(),
                 ComponentType.ReadOnly<CohesionCurveReference>(),
                 ComponentType.ReadOnly<AlignmentCurveReference>(),
                 ComponentType.ReadOnly<SeparationCurveReference>());
 
-            boid_location_query = GetEntityQuery(
+            _boidLocationQuery = GetEntityQuery(
                 ComponentType.ReadOnly<BoidComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>());
 
-            boid_energy_query = GetEntityQuery(
+            _boidEnergyQuery = GetEntityQuery(
                 ComponentType.ReadOnly<BoidComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>(),
                 ComponentType.ReadWrite<EnergyComponent>());
 
-            boid_displacement_query = GetEntityQuery(
+            _boidDisplacementQuery = GetEntityQuery(
                 ComponentType.ReadWrite<PhysicsVelocity>(),
                 ComponentType.ReadOnly<PhysicsMass>(),
                 ComponentType.ReadWrite<LocalToWorld>(),
                 ComponentType.ReadOnly<BoidComponent>());
 
-            food_source_query = GetEntityQuery(
+            _foodSourceQuery = GetEntityQuery(
                 ComponentType.ReadWrite<FoodSourceComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>());
 
             RequireForUpdate<SimulationConfigurationComponent>();
+            RequireForUpdate(_boidQuery);
         }
 
         protected override void OnStartRunning()
@@ -67,64 +67,60 @@ namespace Simulator.Boids
 
         protected override void OnUpdate()
         {
-            if (!controller)
+            if (!_controller)
             {
-                controller = BoidController.Instance;
+                _controller = BoidController.Instance;
                 return;
             }
 
 
-            var boidCount = boid_location_query.CalculateEntityCount();
-
-            NativeArray<BoidProperties> boidPositions = new NativeArray<BoidProperties>(boidCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-            var copyLocationsJob = new CopyLocationsJob
+            // Store all of the boid positions into an array for future use
+            var boidPositions = new NativeArray<BoidProperties>(_boidLocationQuery.CalculateEntityCount(), Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var copyBoidLocationsHandle = new CopyLocationsJob
             {
                 BoidLocations = boidPositions
-            };
-            var copyLocationsJobHandle = copyLocationsJob.ScheduleParallel(boid_location_query, Dependency);
+            }.ScheduleParallel(_boidLocationQuery, Dependency);
 
-            var foodSourceCount = food_source_query.CalculateEntityCount();
-            NativeArray<LocalToWorld> foodSourcePositions = new NativeArray<LocalToWorld>(foodSourceCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-            NativeArray<FoodSourceComponent> foodSourceInformation = new NativeArray<FoodSourceComponent>(foodSourceCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-            var copyFoodSourceLocationsJob = new CopyFoodSourceLocationsJob
+            // Store all of the food components in an array for future use.
+            var foodSourceCount = _foodSourceQuery.CalculateEntityCount();
+            var foodSourcePositions = new NativeArray<LocalToWorld>(foodSourceCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var foodSourceInformation = new NativeArray<FoodSourceComponent>(foodSourceCount, Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
+            var copyFoodSourceLocationsHandle = new CopyFoodSourceLocationsJob
             {
                 Locations = foodSourcePositions,
                 ProducerComponents = foodSourceInformation
-            };
-            var copyFoodSourceLocationsJobHandle = copyFoodSourceLocationsJob.ScheduleParallel(food_source_query, copyLocationsJobHandle);
+            }.ScheduleParallel(_foodSourceQuery, Dependency);
 
-            var bj = new ComputeOptimalDirectionJob
+            // Compute the optimal direction for the boids
+            var optimalDirectionHandle = new ComputeOptimalDirectionJob
             {
                 OtherBoids = boidPositions,
-                config = controller.configuration.BoidConfig,
+                Config = _controller.configuration.BoidConfig,
                 FoodSources = foodSourcePositions,
                 FoodSourceInformation = foodSourceInformation
-            };
-            var boidJobHandle = bj.ScheduleParallel(boid_query, copyFoodSourceLocationsJobHandle);
+            }.ScheduleParallel(_boidQuery, JobHandle.CombineDependencies(copyBoidLocationsHandle, copyFoodSourceLocationsHandle));
 
-            var updateBoidJob = new UpdateBoidLocationJob
+            // Use the previously computed array to update the boid locations
+            var updateBoidLocationsHandle = new UpdateBoidLocationJob
             {
-                config = controller.configuration.BoidConfig,
-                simulationConfig = _simulationConfiguration
-            };
-
-            var updateBoidJobHandle = updateBoidJob.ScheduleParallel(boid_displacement_query, boidJobHandle);
-            updateBoidJobHandle.Complete();
+                Config = _controller.configuration.BoidConfig,
+                SimulationConfig = _simulationConfiguration
+            }.ScheduleParallel(_boidDisplacementQuery, optimalDirectionHandle);
 
             // Update the energy when close to things
-            new UpdateFishEnergyJob
+            var updateFishEnergyJobHandler = new UpdateFishEnergyJob
             {
                 FoodSourceInformation = foodSourceInformation,
                 FoodSourceLocations = foodSourcePositions,
-                EnergyConfig = controller.configuration.EnergyConfig,
+                EnergyConfig = _controller.configuration.EnergyConfig,
                 SimulationConfig = _simulationConfiguration
-            }.Schedule(boid_energy_query, copyFoodSourceLocationsJobHandle).Complete();
+            }.Schedule(_boidEnergyQuery, updateBoidLocationsHandle);
 
             // Update the food sources
             new UpdateFoodSourceEnergyJob
             {
                 FoodSourceInformation = foodSourceInformation
-            }.Schedule(food_source_query, Dependency).Complete();
+            }.ScheduleParallel(_foodSourceQuery, updateFishEnergyJobHandler).Complete();
 
             boidPositions.Dispose(Dependency);
             foodSourcePositions.Dispose(Dependency);

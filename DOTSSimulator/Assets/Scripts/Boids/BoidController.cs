@@ -1,12 +1,5 @@
 using UnityEngine;
-using Unity.Entities;
-using Unity.Rendering;
 using System;
-using Unity.Physics;
-using Collider = Unity.Physics.Collider;
-using Simulator.Boids.Energy;
-using Unity.Collections;
-using Simulator.Boids.Lifecycle;
 
 namespace Simulator.Boids
 {
@@ -20,29 +13,14 @@ namespace Simulator.Boids
         [SerializeField] public UnityEngine.Material BoidMaterial;
         [SerializeField] public GlobalConfiguration configuration;
 
-        public static BoidController Instance = null;
+        public static BoidController Instance;
 
-        void Awake()
+        private void Awake()
         {
             Instance = this;
         }
 
-        void Start()
-        {
-            // Debug.Log("Starting BoidController");
-            // var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-            // Debug.Log("Attempting to spawn prototype");
-            // var prototype = BoidSpawningHelper.SpawnPrototype(entityManager);
-
-            // var ecb = new EntityCommandBuffer(Allocator.Persistent);
-            // BoidSpawningHelper.SpawnBoids(ecb, prototype, SwarmSize, CageSize);
-
-            // ecb.Playback(entityManager);
-            // ecb.Dispose();
-        }
-
-        void OnDrawGizmos()
+        private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(CageSize, CageSize, CageSize));

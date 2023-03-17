@@ -185,7 +185,7 @@ MonoBehaviour:
     EnergyConfig:
       InitialEnergyLevel: 10
       ConsumptionRate: 0.1
-      AssimilationRate: 0.15
+      AssimilationRate: 0.25
     ReproductionConfig:
       ReproductionThreshold: 11
       ReproductionCost: 5

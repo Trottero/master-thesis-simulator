@@ -181,7 +181,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: RegenerationRate
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
@@ -572,7 +572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: RegenerationRate
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
@@ -736,8 +736,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c1d51679a5fb548afe485003d514fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpdatesPerSecond: 30
-  MaxSimulationSpeed: 8
+  UpdatesPerSecond: 15
+  MaxSimulationSpeed: 16
 --- !u!1001 &1909313184
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -796,7 +796,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: RegenerationRate
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
@@ -873,7 +873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: RegenerationRate
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: InitialEnergyLevel
