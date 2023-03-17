@@ -9,7 +9,6 @@ namespace Simulator.Boids
     public struct SpawnBoidsJob : IJobParallelFor
     {
         public Entity Prototype;
-        public int EntityCount;
         public EntityCommandBuffer.ParallelWriter Ecb;
         public float CageSize;
 

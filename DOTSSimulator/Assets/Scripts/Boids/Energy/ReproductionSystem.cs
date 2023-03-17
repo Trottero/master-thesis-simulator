@@ -1,17 +1,18 @@
+using Simulator.Boids;
+using Simulator.Boids.Energy;
+using Simulator.Boids.Lifecycle;
 using Simulator.Configuration;
-using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using Unity.Rendering;
 using UnityEngine;
 
-namespace Simulator.Boids.Energy
+namespace Boids.Energy
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class ReproductionSystem : SystemBase
     {
-        private BoidController controller;
+        private BoidController _controller;
         private Entity _gameControllerEntity;
         private SimulationConfigurationComponent _simulationConfiguration;
 
@@ -36,52 +37,56 @@ namespace Simulator.Boids.Energy
 
         protected override void OnUpdate()
         {
-            // if (!controller)
-            // {
-            //     controller = BoidController.Instance;
-            //     return;
-            // }
+            if (!_controller)
+            {
+                _controller = BoidController.Instance;
+                return;
+            }
 
-            // var reproductionConfig = controller.configuration.ReproductionConfig;
+            var reproductionConfig = _controller.configuration.ReproductionConfig;
 
-            // // Mark entities with energy level above threshold for reproduction
-            // var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            // Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<ShouldReproduceComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
-            //     {
-            //         if (energy.EnergyLevel > reproductionConfig.ReproductionThreshold)
-            //         {
-            //             ecb.AddComponent<ShouldReproduceComponent>(e);
-            //         }
-            //     }).Run();
+            // Mark entities with energy level above threshold for reproduction
+            var ecb = new EntityCommandBuffer(Allocator.TempJob);
+            Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<ShouldReproduceComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
+            {
+                // Check if said entity has enough energy
+                if (energy.EnergyLevel <= reproductionConfig.ReproductionThreshold) return;
+                
+                ecb.AddComponent<ShouldReproduceComponent>(e);
+                ecb.SetComponent(e, new EnergyComponent
+                {
+                    EnergyLevel = energy.EnergyLevel - reproductionConfig.ReproductionCost
+                });
+            }).Run();
 
-            // ecb.Playback(EntityManager);
-            // ecb.Dispose();
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
 
-            // Entities.WithAll<BoidComponent, EnergyComponent, ShouldReproduceComponent>().WithoutBurst().ForEach((ref EnergyComponent energy) =>
-            //     {
-            //         if (energy.EnergyLevel > reproductionConfig.ReproductionThreshold)
-            //         {
-            //             energy.EnergyLevel -= reproductionConfig.ReproductionCost;
-            //         }
-            //     }).Run();
+            if (_shouldReproduceQuery.CalculateEntityCount() == 0)
+            {
+                return;
+            }
+            
+            Debug.Log("Reproducing " + _shouldReproduceQuery.CalculateEntityCount() + " boids");
 
+            // Reproduce
+            ecb = new EntityCommandBuffer(Allocator.TempJob);
+            
+            // Spawn simple prototype
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager);
+            
+            new SpawnBoidsJob
+            {
+                Prototype = proto,
+                Ecb = ecb.AsParallelWriter(),
+                CageSize = 2f
+            }.Schedule(_shouldReproduceQuery.CalculateEntityCount(), 32, Dependency).Complete();
 
-            // if (_shouldReproduceQuery.CalculateEntityCount() != 0)
-            // {
-            //     Debug.Log("Reproducing " + _shouldReproduceQuery.CalculateEntityCount() + " boids");
+            ecb.RemoveComponent<ShouldReproduceComponent>(_shouldReproduceQuery);
 
-            //     // Reproduce
-            //     ecb = new EntityCommandBuffer(Allocator.TempJob);
-            //     var prototype = BoidSpawningHelper.SpawnPrototype(EntityManager);
-            //     BoidSpawningHelper.SpawnBoids(ecb, prototype, _shouldReproduceQuery.CalculateEntityCount(), 10f);
-
-            //     ecb.RemoveComponentForEntityQuery<ShouldReproduceComponent>(_shouldReproduceQuery);
-
-            //     ecb.Playback(EntityManager);
-            //     ecb.Dispose();
-
-            //     EntityManager.DestroyEntity(prototype);
-            // }
+            ecb.DestroyEntity(proto);
+            ecb.Playback(EntityManager);
+            ecb.Dispose();
         }
     }
 }
