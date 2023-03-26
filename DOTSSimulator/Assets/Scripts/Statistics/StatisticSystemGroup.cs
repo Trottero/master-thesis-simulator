@@ -8,7 +8,7 @@ namespace Simulator.Statistics
 {
     // StatisticSystemGroup runs very infrequently
     // It is used to collect statistics about the simulation
-    public class StatisticSystemGroup : ComponentSystemGroup
+    public partial class StatisticSystemGroup : ComponentSystemGroup
     {
         [Preserve]
         public StatisticSystemGroup()

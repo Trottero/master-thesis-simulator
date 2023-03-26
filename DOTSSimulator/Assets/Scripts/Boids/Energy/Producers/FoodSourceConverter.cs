@@ -25,9 +25,8 @@ namespace Simulator.Boids.Energy.Producers
                 MaxEnergyLevel = authoring.MaxEnergyLevel
             };
 
-            AddComponent(foodSource);
-            AddComponent(new PropagateLocalToWorld());
-            AddComponent(new WorldToLocal_Tag());
+            var entity = GetEntity(authoring, TransformUsageFlags.NonUniformScale | TransformUsageFlags.Dynamic);
+            AddComponent(entity, foodSource);
         }
     }
 }

@@ -14,13 +14,15 @@ namespace Simulator.Curves
         public AnimationCurve cohesionCurve;
         public AnimationCurve alignmentCurve;
         public AnimationCurve energyCurve;
-
     }
 
     public class CurveBaker : Baker<CurveConverter>
     {
+        private CurveConverter _authoring;
+
         public override void Bake(CurveConverter authoring)
         {
+            _authoring = authoring;
             ConvertCurve<SeparationCurveReference>(authoring.separationCurve, authoring.NumberOfSamples);
             ConvertCurve<AlignmentCurveReference>(authoring.alignmentCurve, authoring.NumberOfSamples);
             ConvertCurve<CohesionCurveReference>(authoring.cohesionCurve, authoring.NumberOfSamples);
@@ -44,7 +46,8 @@ namespace Simulator.Curves
             var blobAssetReference = blobBuilder.CreateBlobAssetReference<CurveStruct>(Allocator.Persistent);
 
             var curveReference = new T { CurveReference = blobAssetReference };
-            AddComponent(curveReference);
+            var entity = GetEntity(_authoring, TransformUsageFlags.Dynamic);
+            AddComponent(entity, curveReference);
 
             blobBuilder.Dispose();
         }

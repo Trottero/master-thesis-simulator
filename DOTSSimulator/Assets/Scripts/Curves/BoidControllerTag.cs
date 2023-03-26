@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace Simulator.Curves
 {
-    public struct BoidControllerTagComponent : IComponentData { }
+    public struct BoidControllerTagComponent : IComponentData
+    {
+    }
 
     public class BoidControllerTag : MonoBehaviour
     {
@@ -15,7 +17,8 @@ namespace Simulator.Curves
     {
         public override void Bake(BoidControllerTag authoring)
         {
-            AddComponent(new BoidControllerTagComponent());
+            var entity = GetEntity(authoring, TransformUsageFlags.None);
+            AddComponent(entity, new BoidControllerTagComponent());
         }
     }
 }

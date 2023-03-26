@@ -24,7 +24,9 @@ namespace Simulator.Statistics
                 Step = authoring.Step
             };
 
-            AddComponent(statistic);
+            var e = GetEntity(authoring, TransformUsageFlags.None);
+
+            AddComponent(e, statistic);
         }
     }
 }

@@ -19,9 +19,6 @@ namespace Simulator.Boids.Energy.Producers
         {
             base.OnCreate();
 
-            _noPostTransformScaleQuery = new EntityQueryBuilder(Allocator.Persistent).WithAll<FoodSourceComponent>()
-                .WithNone<PostTransformScale>().Build(this);
-
             RequireForUpdate<SimulationConfigurationComponent>();
         }
 
@@ -35,26 +32,6 @@ namespace Simulator.Boids.Energy.Producers
         {
             var dt = _simulationConfiguration.UpdateInterval;
 
-            // Ensure that all entities that act as a food source have a PostTransformScale component
-            // If they don't have it, add it.
-            if (_noPostTransformScaleQuery.CalculateEntityCount() > 0)
-            {
-                var ecb = new EntityCommandBuffer(Allocator.TempJob);
-                Entities.WithStoreEntityQueryInField(ref _noPostTransformScaleQuery).ForEach(
-                        (ref Entity e, in FoodSourceComponent foodSourceComponent) =>
-                        {
-                            ecb.AddComponent<PostTransformScale>(e);
-                            ecb.SetComponent(e, new PostTransformScale
-                            {
-                                Value = float3x3.Scale(1, foodSourceComponent.EffectiveSize, 1)
-                            });
-                        })
-                    .Run();
-
-                ecb.Playback(EntityManager);
-                ecb.Dispose();
-            }
-
             // Regenerate
             Entities.WithAll<FoodSourceComponent>().ForEach((ref FoodSourceComponent foodSource) =>
             {
@@ -63,10 +40,10 @@ namespace Simulator.Boids.Energy.Producers
             }).ScheduleParallel();
 
             // Let scale reflect energy level
-            Entities.WithAll<FoodSourceComponent, PostTransformScale>()
-                .ForEach((ref PostTransformScale scale, in FoodSourceComponent foodSource) =>
+            Entities.WithAll<FoodSourceComponent, PostTransformMatrix>()
+                .ForEach((ref PostTransformMatrix scale, in FoodSourceComponent foodSource) =>
                 {
-                    scale.Value = float3x3.Scale(new float3(1, foodSource.EffectiveSize, 1));
+                    scale.Value = float4x4.Scale(new float3(0.1f, foodSource.EffectiveSize, 0.1f));
                 }).ScheduleParallel();
         }
     }

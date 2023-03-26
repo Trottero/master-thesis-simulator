@@ -21,7 +21,8 @@ namespace Simulator.Boids
     {
         public override void Bake(SchoolAuthoring authoring)
         {
-            AddComponent(new SchoolComponentData
+            var e = GetEntity(authoring, TransformUsageFlags.None);
+            AddComponent(e, new SchoolComponentData
             {
                 CageSize = authoring.CageSize,
                 SwarmSize = authoring.SwarmSize

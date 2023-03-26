@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Simulator.Configuration
 {
-
     public class SimulationConfiguration : MonoBehaviour
     {
         public float UpdatesPerSecond = 30;
@@ -23,10 +22,10 @@ namespace Simulator.Configuration
                 MaxSimulationSpeed = authoring.MaxSimulationSpeed
             };
 
-            Debug.Log($"Current Configuration: UpdatesPerSecond: {authoring.UpdatesPerSecond}, MaxSimulationSpeed: {authoring.MaxSimulationSpeed}");
-
-            AddComponent(configuration);
+            Debug.Log(
+                $"Current Configuration: UpdatesPerSecond: {authoring.UpdatesPerSecond}, MaxSimulationSpeed: {authoring.MaxSimulationSpeed}");
+            var entity = GetEntity(authoring, TransformUsageFlags.None);
+            AddComponent(entity, configuration);
         }
     }
 }
-
