@@ -35,7 +35,7 @@ namespace Simulator.Boids.Lifecycle
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
-                EnergyLevel = boidController.configuration.EnergyConfig.InitialEnergyLevel,
+                Weight = boidController.configuration.EnergyConfig.InitialEnergyLevel,
             });
 
             SetPhysicsForPrototype(entityManager, prototype);

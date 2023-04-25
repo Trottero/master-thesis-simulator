@@ -30,9 +30,6 @@ namespace Boids.Energy
         {
             base.OnStartRunning();
             _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
-
-            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
-            system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
         protected override void OnUpdate()
@@ -50,12 +47,12 @@ namespace Boids.Energy
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<ShouldReproduceComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
             {
                 // Check if said entity has enough energy
-                if (energy.EnergyLevel <= reproductionConfig.ReproductionThreshold) return;
+                if (energy.Weight <= reproductionConfig.ReproductionThreshold) return;
                 
                 ecb.AddComponent<ShouldReproduceComponent>(e);
                 ecb.SetComponent(e, new EnergyComponent
                 {
-                    EnergyLevel = energy.EnergyLevel - reproductionConfig.ReproductionCost
+                    Weight = energy.Weight - reproductionConfig.ReproductionCost
                 });
             }).Run();
 

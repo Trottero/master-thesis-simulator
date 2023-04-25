@@ -38,7 +38,7 @@ namespace Simulator.Statistics
             },
             Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
             {
-                stat.Value += system.EntityManager.GetComponentData<EnergyComponent>(e).EnergyLevel;
+                stat.Value += system.EntityManager.GetComponentData<EnergyComponent>(e).Weight;
             },
             PostAggregator = (StatisticSystem system, Statistic stat) =>
             {

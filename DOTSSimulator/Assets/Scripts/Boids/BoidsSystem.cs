@@ -8,10 +8,12 @@ using Unity.Physics;
 using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy;
 using Simulator.Configuration;
+using Unity.Burst;
 
 namespace Simulator.Boids
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [BurstCompile]
     public partial class BoidsSystem : SystemBase
     {
         private EntityQuery _boidQuery;
@@ -60,9 +62,6 @@ namespace Simulator.Boids
         {
             base.OnStartRunning();
             _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
-
-            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
-            system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
         }
 
         protected override void OnUpdate()

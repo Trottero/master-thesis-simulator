@@ -33,7 +33,7 @@ namespace Simulator.Boids.Energy.Producers
                     // Assimilation rate is 1f
                     var consumed = EnergyConfig.AssimilationRate * SimulationConfig.UpdateInterval;
                     // Add energy to boid
-                    boidEnergy.EnergyLevel += consumed;
+                    boidEnergy.Weight += consumed;
                     // Remove energy from food source
                     foodSource.EnergyLevel -= consumed;
                 }

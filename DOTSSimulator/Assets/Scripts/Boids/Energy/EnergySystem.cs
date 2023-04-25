@@ -20,15 +20,13 @@ namespace Simulator.Boids.Energy
             base.OnCreate();
             _noEnergyQuery = GetEntityQuery(typeof(NoEnergyComponent));
             RequireForUpdate<SimulationConfigurationComponent>();
+
         }
 
         protected override void OnStartRunning()
         {
-            base.OnStartRunning();
             _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
-
-            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
-            system.Timestep = _simulationConfiguration.EffectiveUpdatesPerSecond;
+            base.OnStartRunning();
         }
 
         protected override void OnUpdate()
@@ -44,13 +42,13 @@ namespace Simulator.Boids.Energy
 
             // Update energy level
             Entities.WithAll<BoidComponent, EnergyComponent>()
-                .ForEach((ref EnergyComponent energy) => energy.EnergyLevel -= cr * dt).Run();
+                .ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
 
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
             // // Delete enties with energy level below 0
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<NoEnergyComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
                 {
-                    if (energy.EnergyLevel < 0)
+                    if (energy.Weight < 0)
                     {
                         ecb.AddComponent<NoEnergyComponent>(e);
                     }
