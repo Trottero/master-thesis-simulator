@@ -1,14 +1,14 @@
 using Simulator.Boids.Energy;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Rendering;
 using Unity.Transforms;
-using Unity.Jobs;
 using Collider = Unity.Physics.Collider;
+using UnityEngine.Rendering;
+using UnityEngine;
 
-namespace Simulator.Boids
+namespace Simulator.Boids.Lifecycle
 {
     public static class BoidSpawningHelper
     {
@@ -20,8 +20,7 @@ namespace Simulator.Boids
             var archtype = entityManager.CreateArchetype(
                    typeof(BoidComponent),
                    typeof(LocalToWorld),
-                   typeof(Rotation),
-                   typeof(Translation),
+                   typeof(LocalTransform),
                    typeof(PhysicsCollider),
                    typeof(PhysicsVelocity),
                    typeof(PhysicsMass),
@@ -31,8 +30,8 @@ namespace Simulator.Boids
 
             var prototype = entityManager.CreateEntity(archtype);
 
-            var rm = new RenderMeshDescription(boidController.BoidMesh, boidController.BoidMaterial);
-            RenderMeshUtility.AddComponents(prototype, entityManager, rm);
+            var renderMeshArray = new RenderMeshArray(new UnityEngine.Material[] { boidController.BoidMaterial }, new Mesh[] { boidController.BoidMesh });
+            RenderMeshUtility.AddComponents(prototype, entityManager, new RenderMeshDescription(ShadowCastingMode.Off), renderMeshArray, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
@@ -40,7 +39,7 @@ namespace Simulator.Boids
             });
 
             SetPhysicsForPrototype(entityManager, prototype);
-
+            Debug.Log("Spawned prototype");
             return prototype;
         }
 
@@ -66,7 +65,7 @@ namespace Simulator.Boids
                 entityManager.SetComponentData(proto, PhysicsMass.CreateDynamic(colliderPtr->MassProperties, 0.1f));
             }
 
-            entityManager.AddSharedComponentData(proto, worldIndex);
+            entityManager.AddSharedComponentManaged(proto, worldIndex);
         }
 
         public static void SpawnBoids(EntityCommandBuffer ecb, Entity proto, int count, float maxRadius)
@@ -76,18 +75,12 @@ namespace Simulator.Boids
                 var rng = new System.Random(i);
 
                 var e = ecb.Instantiate(proto);
-                ecb.SetComponent(e, new Rotation
-                {
-                    Value = RandomRotation(rng)
-                });
-
-                ecb.SetComponent(e, new Translation
-                {
-                    Value = RandomPosition(rng, maxRadius)
-                });
+                ecb.SetComponent(e,
+                    LocalTransform.FromPositionRotation(
+                        RandomPosition(rng, maxRadius),
+                        RandomRotation(rng)));
             }
         }
-
 
         private static float3 RandomPosition(System.Random rng, float maxRadius)
         {

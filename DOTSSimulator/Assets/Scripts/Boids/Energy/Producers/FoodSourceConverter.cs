@@ -1,23 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Simulator.Boids.Energy.Producers
 {
-    public class FoodSourceConverter : MonoBehaviour, IConvertGameObjectToEntity
+    public class FoodSourceConverter : MonoBehaviour
     {
         public float InitialEnergyLevel = 100f;
-        public float RegenarationRate = 2f;
-        public float MaxEnergyLevel => 100f;
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+
+        public float RegenerationRate = 2f;
+
+        public float MaxEnergyLevel = 100f;
+    }
+
+    public class FoodSourceConverterBaker : Baker<FoodSourceConverter>
+    {
+        public override void Bake(FoodSourceConverter authoring)
         {
-            dstManager.AddComponentData(entity, new FoodSourceComponent
+            var foodSource = new FoodSourceComponent
             {
-                EnergyLevel = InitialEnergyLevel,
-                RegenarationRate = RegenarationRate,
-                MaxEnergyLevel = MaxEnergyLevel
-            });
+                EnergyLevel = authoring.InitialEnergyLevel,
+                RegenarationRate = authoring.RegenerationRate,
+                MaxEnergyLevel = authoring.MaxEnergyLevel
+            };
+
+            var entity = GetEntity(authoring, TransformUsageFlags.NonUniformScale | TransformUsageFlags.Dynamic);
+            AddComponent(entity, foodSource);
         }
     }
 }

@@ -6,10 +6,11 @@ using Unity.Mathematics;
 
 namespace Simulator.Boids.Energy.Producers
 {
+    [BurstCompile]
     public partial struct UpdateFoodSourceEnergyJob : IJobEntity
     {
-        public NativeArray<FoodSourceComponent> FoodSourceInformation;
-        void Execute([EntityInQueryIndex] int entityInQueryIndex, ref FoodSourceComponent fc)
+        [ReadOnly] public NativeArray<FoodSourceComponent> FoodSourceInformation;
+        void Execute([EntityIndexInQuery] int entityInQueryIndex, ref FoodSourceComponent fc)
         {
             fc = FoodSourceInformation[entityInQueryIndex];
         }

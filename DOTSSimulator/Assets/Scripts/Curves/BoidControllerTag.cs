@@ -5,6 +5,20 @@ using UnityEngine;
 
 namespace Simulator.Curves
 {
-    [GenerateAuthoringComponent]
-    public struct BoidControllerTag : IComponentData { }
+    public struct BoidControllerTagComponent : IComponentData
+    {
+    }
+
+    public class BoidControllerTag : MonoBehaviour
+    {
+    }
+
+    public class BoidControllerTagBaker : Baker<BoidControllerTag>
+    {
+        public override void Bake(BoidControllerTag authoring)
+        {
+            var entity = GetEntity(authoring, TransformUsageFlags.None);
+            AddComponent(entity, new BoidControllerTagComponent());
+        }
+    }
 }

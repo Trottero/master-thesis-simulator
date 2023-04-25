@@ -5,6 +5,7 @@ using Simulator.Configuration;
 using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Simulator.Statistics
 {
@@ -40,15 +41,10 @@ namespace Simulator.Statistics
         private Entity _statisticEntity;
         private StatisticWriter _statisticWriter;
 
-        // Please close your eyes before looking at the next 10 lines of code
+        // Please close your eyes before looking at the next 3 lines of code
         public new EntityQuery GetEntityQuery(params ComponentType[] componentTypes)
         {
             return base.GetEntityQuery(componentTypes);
-        }
-
-        public new T GetComponent<T>(Entity entity) where T : struct, IComponentData
-        {
-            return base.GetComponent<T>(entity);
         }
 
         protected override void OnCreate()
@@ -56,15 +52,17 @@ namespace Simulator.Statistics
             base.OnCreate();
             var id = DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss");
             _statisticWriter = new StatisticWriter(id, _statistics.Select(s => s.Name).ToArray());
+
+            RequireForUpdate<StatisticComponentData>();
+            RequireForUpdate<SimulationConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            var _gameControllerEntity = GetSingletonEntity<BoidControllerTag>();
-            _simulationConfiguration = GetComponent<SimulationConfigurationComponent>(_gameControllerEntity);
 
-            _statisticEntity = GetSingletonEntity<StatisticComponentData>();
+            _statisticEntity = SystemAPI.GetSingletonEntity<StatisticComponentData>();
+            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
 
             // Init all statistics
             foreach (var statistic in _statistics)
@@ -110,9 +108,8 @@ namespace Simulator.Statistics
 
             _statisticWriter.Write(values.Select(x => x.ToString()).ToArray());
 
-            var step = GetComponent<StatisticComponentData>(_statisticEntity).Step;
-            SetComponent(_statisticEntity, new StatisticComponentData { Step = step + (long)_simulationConfiguration.MaxSimulationSpeed });
+            var step = EntityManager.GetComponentData<StatisticComponentData>(_statisticEntity).Step;
+            EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = step + (long)_simulationConfiguration.MaxSimulationSpeed });
         }
     }
-
 }
