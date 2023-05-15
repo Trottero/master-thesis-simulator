@@ -31,7 +31,7 @@ namespace Simulator.Boids.Energy.Producers
                 if (distance < 1f)
                 {
                     // Assimilation rate is 1f
-                    var consumed = EnergyConfig.AssimilationRate * SimulationConfig.UpdateInterval;
+                    var consumed = EnergyConfig.FeedingRate * SimulationConfig.UpdateInterval;
                     // Add energy to boid
                     boidEnergy.Weight += consumed;
                     // Remove energy from food source

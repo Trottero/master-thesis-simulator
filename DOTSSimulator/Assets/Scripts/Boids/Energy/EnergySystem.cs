@@ -41,8 +41,7 @@ namespace Simulator.Boids.Energy
             var cr = _controller.configuration.EnergyConfig.ConsumptionRate;
 
             // Update energy level
-            Entities.WithAll<BoidComponent, EnergyComponent>()
-                .ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
+            Entities.WithAll<BoidComponent, EnergyComponent>().ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
 
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
             // // Delete enties with energy level below 0

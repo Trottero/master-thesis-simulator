@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Simulator.Configuration;
-using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Simulator.Statistics
 {
@@ -15,7 +13,7 @@ namespace Simulator.Statistics
         public EntityQuery Query;
         public string Name;
         public float Value;
-        public Dictionary<string, object> StatisticBag = new Dictionary<string, object>();
+        public Dictionary<string, object> StatisticBag = new();
         public Action<StatisticSystem, Statistic> Init;
         public Action<StatisticSystem, Statistic> PreAggregator;
         public Action<StatisticSystem, Statistic, Entity> Aggregator;
@@ -27,9 +25,10 @@ namespace Simulator.Statistics
     {
         private SimulationConfigurationComponent _simulationConfiguration;
 
-        private List<Statistic> _statistics = new List<Statistic>()
+        private List<Statistic> _statistics = new()
         {
             Metrics.StatisticStep,
+            Metrics.TimeStamp,
             Metrics.AverageEnergy,
             Metrics.NumberOfBoids,
             Metrics.NumberOfFoodSources,
@@ -73,13 +72,19 @@ namespace Simulator.Statistics
 
         protected override void OnUpdate()
         {
+            var statistics = EntityManager.GetComponentData<StatisticComponentData>(_statisticEntity);
+            if (statistics.Step != 0)
+            {
+                EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep});
+                return;
+            }
+            
             // Pre-aggregator
             foreach (var statistic in _statistics)
             {
                 statistic.PreAggregator?.Invoke(this, statistic);
             }
-
-
+            
             // Aggregator
             foreach (var statistic in _statistics)
             {
@@ -107,9 +112,8 @@ namespace Simulator.Statistics
             }
 
             _statisticWriter.Write(values.Select(x => x.ToString()).ToArray());
-
-            var step = EntityManager.GetComponentData<StatisticComponentData>(_statisticEntity).Step;
-            EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = step + (long)_simulationConfiguration.MaxSimulationSpeed });
+            
+            EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep + 1});
         }
     }
 }

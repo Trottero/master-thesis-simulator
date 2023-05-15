@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Energy.Producers;
@@ -11,7 +13,7 @@ namespace Simulator.Statistics
 {
     public static class Metrics
     {
-        public static readonly Statistic StatisticStep = new Statistic
+        public static readonly Statistic StatisticStep = new()
         {
             Name = "Step",
             Init = (statisticSystem, statistic) =>
@@ -21,9 +23,25 @@ namespace Simulator.Statistics
             Aggregator = (statisticSystem, statistic, entity) =>
             {
                 var step = statisticSystem.EntityManager.GetComponentData<StatisticComponentData>(entity);
-                statistic.Value = step.Step;
+                statistic.Value = step.MetaStep;
             }
         };
+
+        public static readonly Statistic TimeStamp = new()
+        {
+            Name = "TimeStamp",
+            StatisticBag = new Dictionary<string, object>(),
+            Init = (statisticSystem, statistic) =>
+            {
+                statistic.StatisticBag["StartTime"] = DateTime.UtcNow;
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(StatisticComponentData));
+            },
+            PreAggregator = (_, statistic) =>
+            {
+                statistic.Value = (float)(DateTime.UtcNow - (DateTime)statistic.StatisticBag["StartTime"]).TotalSeconds;
+            }
+        };
+        
         public static readonly Statistic AverageEnergy = new Statistic
         {
             Name = "AvgEnergy",
@@ -46,7 +64,7 @@ namespace Simulator.Statistics
             }
         };
 
-        public static readonly Statistic NumberOfBoids = new Statistic
+        public static readonly Statistic NumberOfBoids = new()
         {
             Name = "NoBoids",
             Init = (statisticSystem, statistic) =>

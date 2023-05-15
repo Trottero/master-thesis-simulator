@@ -8,6 +8,7 @@ namespace Simulator.Statistics
     public struct StatisticComponentData : IComponentData
     {
         public long Step;
+        public long MetaStep;
     }
 
     public class StatisticComponentDataAuthoring : MonoBehaviour
@@ -21,7 +22,8 @@ namespace Simulator.Statistics
         {
             var statistic = new StatisticComponentData
             {
-                Step = authoring.Step
+                Step = authoring.Step,
+                MetaStep = 0
             };
 
             var e = GetEntity(authoring, TransformUsageFlags.None);

@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CageSize: 10
-  SwarmSize: 400
+  SwarmSize: 300
 --- !u!1 &1400816239
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,7 +630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c1d51679a5fb548afe485003d514fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UpdatesPerSecond: 15
+  UpdatesPerSecond: 5
   MaxSimulationSpeed: 16
 --- !u!1001 &1909313184
 PrefabInstance:

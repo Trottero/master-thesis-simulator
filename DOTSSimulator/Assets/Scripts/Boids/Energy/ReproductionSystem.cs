@@ -30,6 +30,12 @@ namespace Boids.Energy
                 _controller = BoidController.Instance;
                 return;
             }
+            
+            // Do not update system if disabled.
+            if (!_controller.configuration.ReproductionConfig.ReproductionEnabled)
+            {
+                return;
+            }
 
             var reproductionConfig = _controller.configuration.ReproductionConfig;
 

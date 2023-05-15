@@ -174,7 +174,7 @@ MonoBehaviour:
   BoidMaterial: {fileID: 2100000, guid: b69f1e29331ed4c41a766fd13baf5e08, type: 2}
   configuration:
     BoidConfig:
-      Speed: 1
+      Speed: 0.84
       RotationSpeed: 360
       PerceptionRange: 10
       SeparationWeight: 0
@@ -183,13 +183,14 @@ MonoBehaviour:
       StayInCubeWeight: 1
       FoodSourceWeight: 1
     EnergyConfig:
-      InitialEnergyLevel: 150
-      ConsumptionRate: 0.1
-      AssimilationRate: 0.25
+      InitialEnergyLevel: 283
+      ConsumptionRate: -0.0000064621913
+      FeedingRate: 0.00003028549
     ReproductionConfig:
       MinWeightForReproduction: 200
       ReproductionWeightLoss: 100
       OffspringWeight: 100
+      ReproductionEnabled: 0
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0

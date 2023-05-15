@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.Serialization;
 
 namespace Simulator.Boids
 {
@@ -55,6 +56,7 @@ namespace Simulator.Boids
         public float MinWeightForReproduction;
         public float ReproductionWeightLoss;
         public float OffspringWeight;
+        public bool ReproductionEnabled;
     }
 
     [Serializable]
@@ -62,6 +64,6 @@ namespace Simulator.Boids
     {
         public float InitialEnergyLevel;
         public float ConsumptionRate;
-        public float AssimilationRate;
+        public float FeedingRate;
     }
 }
