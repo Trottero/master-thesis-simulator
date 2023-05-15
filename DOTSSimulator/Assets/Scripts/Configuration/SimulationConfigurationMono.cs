@@ -3,15 +3,23 @@ using UnityEngine;
 
 namespace Simulator.Configuration
 {
-    public class SimulationConfiguration : MonoBehaviour
+    public class SimulationConfigurationMono : MonoBehaviour
     {
-        public float UpdatesPerSecond = 30;
-        public float MaxSimulationSpeed = 8;
+        public float UpdatesPerSecond = 15;
+        public float MaxSimulationSpeed = 16;
+    }
+    
+    public struct SimulationConfigurationComponent : IComponentData
+    {
+        public float UpdatesPerSecond;
+        public float UpdateInterval => 1f / UpdatesPerSecond;
+        public float EffectiveFixedSystemTimestep => UpdateInterval * (1f / MaxSimulationSpeed);
+        public float MaxSimulationSpeed;
     }
 
-    public class ConfigurationBaker : Baker<SimulationConfiguration>
+    public class SimulationConfigurationBaker : Baker<SimulationConfigurationMono>
     {
-        public override void Bake(SimulationConfiguration authoring)
+        public override void Bake(SimulationConfigurationMono authoring)
         {
             var configuration = new SimulationConfigurationComponent
             {

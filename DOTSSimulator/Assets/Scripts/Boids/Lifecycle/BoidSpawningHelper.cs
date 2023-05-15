@@ -30,12 +30,12 @@ namespace Simulator.Boids.Lifecycle
 
             var prototype = entityManager.CreateEntity(archtype);
 
-            var renderMeshArray = new RenderMeshArray(new UnityEngine.Material[] { boidController.BoidMaterial }, new Mesh[] { boidController.BoidMesh });
+            var renderMeshArray = new RenderMeshArray(new [] { boidController.BoidMaterial }, new [] { boidController.BoidMesh });
             RenderMeshUtility.AddComponents(prototype, entityManager, new RenderMeshDescription(ShadowCastingMode.Off), renderMeshArray, MaterialMeshInfo.FromRenderMeshArrayIndices(0, 0));
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
-                Weight = boidController.configuration.EnergyConfig.InitialEnergyLevel,
+                Weight = boidController.configuration.ReproductionConfig.OffspringWeight,
             });
 
             SetPhysicsForPrototype(entityManager, prototype);

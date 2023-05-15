@@ -42,7 +42,7 @@ namespace Simulator.Boids
         public float Speed;
         public float RotationSpeed;
         public float PerceptionRange;
-        public float SeperationWeight;
+        public float SeparationWeight;
         public float CohesionWeight;
         public float AlignmentWeight;
         public float StayInCubeWeight;
@@ -52,8 +52,9 @@ namespace Simulator.Boids
     [Serializable]
     public struct ReproductionConfiguration
     {
-        public float ReproductionThreshold;
-        public float ReproductionCost;
+        public float MinWeightForReproduction;
+        public float ReproductionWeightLoss;
+        public float OffspringWeight;
     }
 
     [Serializable]

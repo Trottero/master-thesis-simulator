@@ -76,7 +76,7 @@ namespace Simulator.Boids
             boid.OptimalDirection = math.normalizesafe(
                 Config.AlignmentWeight * alignment +
                 Config.CohesionWeight * cohesion +
-                Config.SeperationWeight * separation +
+                Config.SeparationWeight * separation +
                 Config.StayInCubeWeight * stayInCube +
                 Config.FoodSourceWeight * foodSource,
                 math.normalizesafe(localToWorld.Forward));

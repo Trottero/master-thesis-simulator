@@ -177,18 +177,19 @@ MonoBehaviour:
       Speed: 1
       RotationSpeed: 360
       PerceptionRange: 10
-      SeperationWeight: 1
+      SeparationWeight: 0
       CohesionWeight: 1
       AlignmentWeight: 0.4
       StayInCubeWeight: 1
       FoodSourceWeight: 1
     EnergyConfig:
-      InitialEnergyLevel: 10
+      InitialEnergyLevel: 150
       ConsumptionRate: 0.1
       AssimilationRate: 0.25
     ReproductionConfig:
-      ReproductionThreshold: 11
-      ReproductionCost: 5
+      MinWeightForReproduction: 200
+      ReproductionWeightLoss: 100
+      OffspringWeight: 100
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0

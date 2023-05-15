@@ -1,7 +1,6 @@
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Lifecycle;
-using Simulator.Configuration;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -14,7 +13,6 @@ namespace Boids.Energy
     {
         private BoidController _controller;
         private Entity _gameControllerEntity;
-        private SimulationConfigurationComponent _simulationConfiguration;
 
         private EntityQuery _shouldReproduceQuery;
 
@@ -23,13 +21,6 @@ namespace Boids.Energy
             base.OnCreate();
 
             _shouldReproduceQuery = GetEntityQuery(ComponentType.ReadOnly<ShouldReproduceComponent>());
-            RequireForUpdate<SimulationConfigurationComponent>();
-        }
-
-        protected override void OnStartRunning()
-        {
-            base.OnStartRunning();
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
         }
 
         protected override void OnUpdate()
@@ -47,12 +38,12 @@ namespace Boids.Energy
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<ShouldReproduceComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
             {
                 // Check if said entity has enough energy
-                if (energy.Weight <= reproductionConfig.ReproductionThreshold) return;
+                if (energy.Weight <= reproductionConfig.MinWeightForReproduction) return;
                 
                 ecb.AddComponent<ShouldReproduceComponent>(e);
                 ecb.SetComponent(e, new EnergyComponent
                 {
-                    Weight = energy.Weight - reproductionConfig.ReproductionCost
+                    Weight = energy.Weight - reproductionConfig.ReproductionWeightLoss
                 });
             }).Run();
 
