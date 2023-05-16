@@ -1,13 +1,11 @@
+using Framework;
 using Simulator.Configuration;
-using Simulator.Curves;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Rendering;
-using UnityEngine;
 
 namespace Simulator.Boids.Energy
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class EnergySystem : SystemBase
     {
         private BoidController _controller;

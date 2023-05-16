@@ -1,3 +1,4 @@
+using Framework;
 using Simulator.Configuration;
 using Unity.Collections;
 using Unity.Entities;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Simulator.Boids.Energy.Producers
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class ProducerSystem : SystemBase
     {
         private SimulationConfigurationComponent _simulationConfiguration;

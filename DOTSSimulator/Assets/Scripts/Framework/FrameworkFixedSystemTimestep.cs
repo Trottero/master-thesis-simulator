@@ -1,5 +1,6 @@
 ﻿using Simulator.Configuration;
 using Unity.Entities;
+using Unity.Physics.Systems;
 
 namespace Framework
 {
@@ -12,8 +13,12 @@ namespace Framework
         {
             _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
 
-            var system = World.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
-            system.Timestep = _simulationConfiguration.EffectiveFixedSystemTimestep;
+            var physicsSystemGroup = World.GetOrCreateSystemManaged<PhysicsSystemGroup>();
+            physicsSystemGroup.RateManager =
+                new RateUtils.FixedRateCatchUpManager(_simulationConfiguration.EffectiveFixedSystemTimestep);
+            
+            var frameworkFixedGroup = World.GetOrCreateSystemManaged<FrameworkFixedSystemGroup>();
+            frameworkFixedGroup.RateManager = new RateUtils.FixedRateCatchUpManager(_simulationConfiguration.EffectiveFixedSystemTimestep);
             
             base.OnStartRunning();
         }

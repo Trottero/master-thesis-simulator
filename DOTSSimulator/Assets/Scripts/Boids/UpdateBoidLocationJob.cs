@@ -34,7 +34,7 @@ namespace Simulator.Boids
             float sign = math.sign(magDiff);
             float maxMagDelta = math.min(maxMag, math.abs(magDiff));
             float diff = math.min(1f, maxRadsDelta / delta);
-
+            
             return Float3Slerp(current, target, diff) * (math.length(current) + maxMagDelta * sign);
         }
 

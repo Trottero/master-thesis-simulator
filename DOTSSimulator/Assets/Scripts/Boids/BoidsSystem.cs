@@ -1,3 +1,4 @@
+using Framework;
 using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
@@ -12,7 +13,7 @@ using Unity.Burst;
 
 namespace Simulator.Boids
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     [BurstCompile]
     public partial class BoidsSystem : SystemBase
     {

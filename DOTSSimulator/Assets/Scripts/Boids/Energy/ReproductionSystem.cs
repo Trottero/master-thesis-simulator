@@ -1,3 +1,4 @@
+using Framework;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Lifecycle;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Boids.Energy
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class ReproductionSystem : SystemBase
     {
         private BoidController _controller;
