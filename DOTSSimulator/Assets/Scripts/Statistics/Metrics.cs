@@ -5,7 +5,6 @@ using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Energy.Producers;
 using Unity.Collections;
-using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
@@ -42,7 +41,7 @@ namespace Simulator.Statistics
             }
         };
         
-        public static readonly Statistic AverageEnergy = new Statistic
+        public static readonly Statistic AverageEnergy = new()
         {
             Name = "AvgEnergy",
             Init = (statisticSystem, statistic) =>
@@ -53,14 +52,15 @@ namespace Simulator.Statistics
             PreAggregator = (statisticSystem, statistic) =>
             {
                 statistic.Value = 0f;
+                statistic.StatisticBag["weight"] = 0m;
             },
-            Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
+            Aggregator = (system, stat, e) =>
             {
-                stat.Value += system.EntityManager.GetComponentData<EnergyComponent>(e).Weight;
+                stat.StatisticBag["weight"] = (decimal)stat.StatisticBag["weight"] + system.EntityManager.GetComponentData<EnergyComponent>(e).Weight;
             },
-            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            PostAggregator = (_, stat) =>
             {
-                stat.Value /= stat.Query.CalculateEntityCount();
+                stat.Value = (float)((decimal)stat.StatisticBag["weight"] / stat.Query.CalculateEntityCount());
             }
         };
 
@@ -71,26 +71,26 @@ namespace Simulator.Statistics
             {
                 statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent));
             },
-            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            PostAggregator = (_, stat) =>
             {
                 stat.Value = stat.Query.CalculateEntityCount();
             }
         };
 
-        public static readonly Statistic NumberOfFoodSources = new Statistic
+        public static readonly Statistic NumberOfFoodSources = new()
         {
             Name = "NoFoodSources",
             Init = (statisticSystem, statistic) =>
             {
                 statistic.Query = statisticSystem.GetEntityQuery(typeof(FoodSourceComponent));
             },
-            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            PostAggregator = (system, stat) =>
             {
                 stat.Value = stat.Query.CalculateEntityCount();
             }
         };
 
-        public static readonly Statistic TotalFoodAvailable = new Statistic
+        public static readonly Statistic TotalFoodAvailable = new()
         {
             Name = "TotalFoodAvailable",
             Init = (statisticSystem, statistic) =>
@@ -101,15 +101,15 @@ namespace Simulator.Statistics
             {
                 statistic.Value = 0f;
             },
-            Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
+            Aggregator = (system, stat, e) =>
             {
-                stat.Value += system.EntityManager.GetComponentData<FoodSourceComponent>(e).EnergyLevel;
+                stat.Value += (float)system.EntityManager.GetComponentData<FoodSourceComponent>(e).EnergyLevel;
             }
         };
 
         // Computes the average deviation from the angle of the school of fish.
         // Andreas Huth and Christian Wissel 1992
-        public static readonly Statistic Polarization = new Statistic
+        public static readonly Statistic Polarization = new()
         {
             Name = "Polarization",
             Init = (statisticSystem, statistic) =>
@@ -128,11 +128,11 @@ namespace Simulator.Statistics
                     avgangle += math.forward(rotation.Rotation);
                 }
 
-                statistic.StatisticBag["avgdirection"] = avgangle / (float)rotations.Length;
+                statistic.StatisticBag["avgdirection"] = avgangle / rotations.Length;
 
                 rotations.Dispose();
             },
-            Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
+            Aggregator = (system, stat, e) =>
             {
                 var rotation = system.EntityManager.GetComponentData<LocalTransform>(e);
                 var schoolangle = (float3)stat.StatisticBag["avgdirection"];
@@ -140,7 +140,7 @@ namespace Simulator.Statistics
                 // normalize difference to 0..1 where 1 is 180 degrees
                 stat.Value += (1f - angle) / 2f;
             },
-            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            PostAggregator = (system, stat) =>
             {
                 stat.Value /= stat.Query.CalculateEntityCount();
             }
@@ -148,7 +148,7 @@ namespace Simulator.Statistics
 
         // Compute the distance to the average center of the school of fish.
         // Andreas Huth and Christian Wissel 1992
-        public static readonly Statistic Expanse = new Statistic
+        public static readonly Statistic Expanse = new()
         {
             Name = "Expanse",
             Init = (statisticSystem, statistic) =>
@@ -167,18 +167,18 @@ namespace Simulator.Statistics
                     avgpos += translation.Position;
                 }
 
-                statistic.StatisticBag["avgpos"] = avgpos / (float)translations.Length;
+                statistic.StatisticBag["avgpos"] = avgpos / translations.Length;
 
                 translations.Dispose();
             },
-            Aggregator = (StatisticSystem system, Statistic stat, Entity e) =>
+            Aggregator = (system, stat, e) =>
             {
                 var translation = system.EntityManager.GetComponentData<LocalTransform>(e);
                 var avgpos = (float3)stat.StatisticBag["avgpos"];
                 var distance = math.distance(translation.Position, avgpos);
                 stat.Value += distance;
             },
-            PostAggregator = (StatisticSystem system, Statistic stat) =>
+            PostAggregator = (system, stat) =>
             {
                 stat.Value /= stat.Query.CalculateEntityCount();
             }

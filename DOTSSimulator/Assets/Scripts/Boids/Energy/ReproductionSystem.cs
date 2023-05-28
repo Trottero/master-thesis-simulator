@@ -45,12 +45,12 @@ namespace Boids.Energy
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<ShouldReproduceComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
             {
                 // Check if said entity has enough energy
-                if (energy.Weight <= reproductionConfig.MinWeightForReproduction) return;
+                if (energy.Weight <= (decimal)reproductionConfig.MinWeightForReproduction) return;
                 
                 ecb.AddComponent<ShouldReproduceComponent>(e);
                 ecb.SetComponent(e, new EnergyComponent
                 {
-                    Weight = energy.Weight - reproductionConfig.ReproductionWeightLoss
+                    Weight = energy.Weight - (decimal)reproductionConfig.ReproductionWeightLoss
                 });
             }).Run();
 
@@ -68,7 +68,7 @@ namespace Boids.Energy
             ecb = new EntityCommandBuffer(Allocator.TempJob);
             
             // Spawn simple prototype
-            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, _controller.configuration.ReproductionConfig.OffspringWeight);
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)_controller.configuration.ReproductionConfig.OffspringWeight);
             
             new SpawnBoidsJob
             {

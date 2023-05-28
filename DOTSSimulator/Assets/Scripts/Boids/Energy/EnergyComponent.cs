@@ -7,6 +7,6 @@ namespace Simulator.Boids.Energy
 {
     public struct EnergyComponent : IComponentData
     {
-        public float Weight;
+        public decimal Weight;
     }
 }

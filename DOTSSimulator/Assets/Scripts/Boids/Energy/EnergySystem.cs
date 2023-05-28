@@ -2,6 +2,7 @@ using Framework;
 using Simulator.Configuration;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Simulator.Boids.Energy
 {
@@ -35,9 +36,8 @@ namespace Simulator.Boids.Energy
                 return;
             }
 
-            var dt = _simulationConfiguration.UpdateInterval;
-            var cr = _controller.configuration.EnergyConfig.ConsumptionRate;
-
+            var dt = (decimal)_simulationConfiguration.UpdateInterval;
+            var cr = (decimal)_controller.configuration.EnergyConfig.ConsumptionRate;
             // Update energy level
             Entities.WithAll<BoidComponent, EnergyComponent>().ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
 

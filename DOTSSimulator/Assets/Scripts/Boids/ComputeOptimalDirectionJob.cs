@@ -68,7 +68,7 @@ namespace Simulator.Boids
             var closestFoodPosition = FoodSources[closestFoodIndex].Position;
 
             var foodSource = float3.zero;
-            if (closestFoodComponent.EnergyLevel > 6f)
+            if (closestFoodComponent.EnergyLevel > 6m)
             {
                 foodSource = math.normalizesafe(closestFoodPosition - localToWorld.Position, float3.zero);
             }
@@ -88,13 +88,13 @@ namespace Simulator.Boids
             var closestDistance = float.MaxValue;
             for (var i = 0; i < FoodSources.Length; i++)
             {
-                if (FoodSourceInformation[i].EnergyLevel < 6f)
+                if (FoodSourceInformation[i].EnergyLevel < 6m)
                 {
                     continue;
                 }
 
                 var effectivePosition = FoodSourceInformation[i].EffectivePosition(boidPosition, FoodSources[i].Position);
-                var distance = math.distance(boidPosition, effectivePosition) / FoodSourceInformation[i].EnergyLevel;
+                var distance = math.distance(boidPosition, effectivePosition) / (float)FoodSourceInformation[i].EnergyLevel;
                 if (distance < closestDistance)
                 {
                     closestDistance = distance;

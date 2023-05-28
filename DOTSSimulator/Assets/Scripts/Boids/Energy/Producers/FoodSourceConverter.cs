@@ -7,11 +7,11 @@ namespace Simulator.Boids.Energy.Producers
 {
     public class FoodSourceConverter : MonoBehaviour
     {
-        public float InitialEnergyLevel = 100f;
+        public double InitialEnergyLevel = 100d;
 
-        public float RegenerationRate = 2f;
+        public double RegenerationRate = 2d;
 
-        public float MaxEnergyLevel = 100f;
+        public double MaxEnergyLevel = 100d;
     }
 
     public class FoodSourceConverterBaker : Baker<FoodSourceConverter>
@@ -20,9 +20,9 @@ namespace Simulator.Boids.Energy.Producers
         {
             var foodSource = new FoodSourceComponent
             {
-                EnergyLevel = authoring.InitialEnergyLevel,
-                RegenarationRate = authoring.RegenerationRate,
-                MaxEnergyLevel = authoring.MaxEnergyLevel
+                EnergyLevel = (decimal)authoring.InitialEnergyLevel,
+                RegenarationRate = (decimal)authoring.RegenerationRate,
+                MaxEnergyLevel = (decimal)authoring.MaxEnergyLevel
             };
 
             var entity = GetEntity(authoring, TransformUsageFlags.NonUniformScale | TransformUsageFlags.Dynamic);

@@ -13,7 +13,7 @@ namespace Simulator.Boids.Lifecycle
     public static class BoidSpawningHelper
     {
         public static PhysicsWorldIndex worldIndex = new PhysicsWorldIndex();
-        public static Entity SpawnPrototype(EntityManager entityManager, float weight)
+        public static Entity SpawnPrototype(EntityManager entityManager, decimal weight)
         {
             var boidController = BoidController.Instance;
 

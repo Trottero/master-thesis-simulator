@@ -1,8 +1,6 @@
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Transforms;
 using Unity.Collections;
-using Unity.Mathematics;
 
 namespace Simulator.Boids.Energy.Producers
 {

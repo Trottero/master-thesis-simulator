@@ -1,5 +1,6 @@
 using Framework;
 using Simulator.Configuration;
+using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -31,12 +32,12 @@ namespace Simulator.Boids.Energy.Producers
 
         protected override void OnUpdate()
         {
-            var dt = _simulationConfiguration.UpdateInterval;
+            var dt = (decimal)_simulationConfiguration.UpdateInterval;
 
             // Regenerate
             Entities.WithAll<FoodSourceComponent>().ForEach((ref FoodSourceComponent foodSource) =>
             {
-                foodSource.EnergyLevel = math.clamp(foodSource.EnergyLevel + foodSource.RegenarationRate * dt, 0f,
+                foodSource.EnergyLevel = Mathm.Clamp(foodSource.EnergyLevel + foodSource.RegenarationRate * dt, 0m,
                     foodSource.MaxEnergyLevel);
             }).ScheduleParallel();
 

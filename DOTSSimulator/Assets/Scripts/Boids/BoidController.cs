@@ -53,17 +53,17 @@ namespace Simulator.Boids
     [Serializable]
     public struct ReproductionConfiguration
     {
-        public float MinWeightForReproduction;
-        public float ReproductionWeightLoss;
-        public float OffspringWeight;
+        public double MinWeightForReproduction;
+        public double ReproductionWeightLoss;
+        public double OffspringWeight;
         public bool ReproductionEnabled;
     }
 
     [Serializable]
     public struct EnergyConfiguration
     {
-        public float InitialEnergyLevel;
-        public float ConsumptionRate;
-        public float FeedingRate;
+        public double InitialEnergyLevel;
+        public double ConsumptionRate;
+        public double FeedingRate;
     }
 }

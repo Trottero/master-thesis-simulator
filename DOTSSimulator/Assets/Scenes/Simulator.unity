@@ -183,13 +183,13 @@ MonoBehaviour:
       StayInCubeWeight: 1
       FoodSourceWeight: 1
     EnergyConfig:
-      InitialEnergyLevel: 283
-      ConsumptionRate: -0.0000064621913
-      FeedingRate: 0.00003028549
+      InitialEnergyLevel: 384
+      ConsumptionRate: 0.000006462191358024691
+      FeedingRate: 0.00003028549382716049
     ReproductionConfig:
-      MinWeightForReproduction: 200
-      ReproductionWeightLoss: 100
-      OffspringWeight: 100
+      MinWeightForReproduction: 0
+      ReproductionWeightLoss: 0
+      OffspringWeight: 0
       ReproductionEnabled: 0
 --- !u!114 &429673570
 MonoBehaviour:
