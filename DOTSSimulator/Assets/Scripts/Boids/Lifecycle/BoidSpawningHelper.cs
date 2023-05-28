@@ -13,7 +13,7 @@ namespace Simulator.Boids.Lifecycle
     public static class BoidSpawningHelper
     {
         public static PhysicsWorldIndex worldIndex = new PhysicsWorldIndex();
-        public static Entity SpawnPrototype(EntityManager entityManager)
+        public static Entity SpawnPrototype(EntityManager entityManager, float weight)
         {
             var boidController = BoidController.Instance;
 
@@ -35,7 +35,7 @@ namespace Simulator.Boids.Lifecycle
 
             entityManager.SetComponentData(prototype, new EnergyComponent
             {
-                Weight = boidController.configuration.ReproductionConfig.OffspringWeight,
+                Weight = weight,
             });
 
             SetPhysicsForPrototype(entityManager, prototype);

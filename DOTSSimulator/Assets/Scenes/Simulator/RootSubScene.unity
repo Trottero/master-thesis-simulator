@@ -294,7 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CageSize: 10
-  SwarmSize: 300
+  SwarmSize: 100
 --- !u!1 &1400816239
 GameObject:
   m_ObjectHideFlags: 0

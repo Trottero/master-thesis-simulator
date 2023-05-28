@@ -31,7 +31,7 @@ namespace Simulator.Boids.Lifecycle
             var schoolComponentData = EntityManager.GetComponentData<SchoolComponentData>(schoolEntity);
 
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager);
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, BoidController.Instance.configuration.EnergyConfig.InitialEnergyLevel);
             new SpawnBoidsJob
             {
                 Prototype = proto,

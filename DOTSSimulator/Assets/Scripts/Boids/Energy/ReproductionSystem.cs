@@ -68,7 +68,7 @@ namespace Boids.Energy
             ecb = new EntityCommandBuffer(Allocator.TempJob);
             
             // Spawn simple prototype
-            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager);
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, _controller.configuration.ReproductionConfig.OffspringWeight);
             
             new SpawnBoidsJob
             {
