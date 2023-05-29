@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UpdatesPerSecond: 5
-  MaxSimulationSpeed: 5
+  MaxSimulationSpeed: 60
 --- !u!4 &415426935 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
