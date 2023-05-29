@@ -9,6 +9,12 @@ namespace Framework
     {
         private SimulationConfigurationComponent _simulationConfiguration;
 
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            RequireForUpdate<SimulationConfigurationComponent>();
+        }
+        
         protected override void OnStartRunning()
         {
             _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
