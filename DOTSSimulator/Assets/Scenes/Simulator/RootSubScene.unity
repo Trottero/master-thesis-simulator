@@ -136,14 +136,6 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.87
       objectReference: {fileID: 0}
@@ -182,18 +174,6 @@ PrefabInstance:
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenarationRate
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenerationRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: InitialEnergyLevel
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043075, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_Name
@@ -413,14 +393,6 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.64
       objectReference: {fileID: 0}
@@ -459,18 +431,6 @@ PrefabInstance:
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenarationRate
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenerationRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: InitialEnergyLevel
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043075, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_Name
@@ -645,18 +605,6 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.62
       objectReference: {fileID: 0}
@@ -696,18 +644,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenarationRate
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenerationRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: InitialEnergyLevel
-      value: 50
-      objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043075, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_Name
       value: FoodSource (2)
@@ -725,28 +661,8 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2031299625727837217, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299625727837217, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
@@ -788,18 +704,6 @@ PrefabInstance:
     - target: {fileID: 2031299626451043072, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenarationRate
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: RegenerationRate
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2031299626451043073, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
-      propertyPath: InitialEnergyLevel
-      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2031299626451043075, guid: f016ea40179e6ba41a6aa3a0e040be4a, type: 3}
       propertyPath: m_Name

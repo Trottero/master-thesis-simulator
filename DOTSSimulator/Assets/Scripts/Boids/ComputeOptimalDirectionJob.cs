@@ -70,14 +70,14 @@ namespace Simulator.Boids
             var foodSource = float3.zero;
             if (closestFoodComponent.EnergyLevel > 6m)
             {
-                foodSource = math.normalizesafe(closestFoodPosition - localToWorld.Position, float3.zero);
+                foodSource = math.normalizesafe(closestFoodComponent.EffectivePosition(localToWorld.Position, closestFoodPosition) - localToWorld.Position, float3.zero);
             }
 
             boid.OptimalDirection = math.normalizesafe(
                 Config.AlignmentWeight * alignment +
                 Config.CohesionWeight * cohesion +
                 Config.SeparationWeight * separation +
-                Config.StayInCubeWeight * stayInCube +
+                // Config.StayInCubeWeight * stayInCube +
                 Config.FoodSourceWeight * foodSource,
                 math.normalizesafe(localToWorld.Forward));
         }

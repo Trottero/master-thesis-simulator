@@ -187,10 +187,10 @@ MonoBehaviour:
       ConsumptionRate: 0.000006462191358024691
       FeedingRate: 0.00003028549382716049
     ReproductionConfig:
-      MinWeightForReproduction: 0
-      ReproductionWeightLoss: 0
-      OffspringWeight: 0
-      ReproductionEnabled: 0
+      MinWeightForReproduction: 500
+      ReproductionWeightLoss: 200
+      OffspringWeight: 200
+      ReproductionEnabled: 1
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0
