@@ -175,13 +175,13 @@ MonoBehaviour:
   configuration:
     BoidConfig:
       Speed: 0.84
-      RotationSpeed: 360
+      RotationSpeed: 120
       PerceptionRange: 10
-      SeparationWeight: 0
+      SeparationWeight: 1
       CohesionWeight: 1
-      AlignmentWeight: 0.4
+      AlignmentWeight: 1
       StayInCubeWeight: 1
-      FoodSourceWeight: 1
+      FoodSourceWeight: 2
     EnergyConfig:
       InitialEnergyLevel: 384
       ConsumptionRate: 0.000006462191358024691
