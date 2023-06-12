@@ -64,27 +64,31 @@ namespace Simulator.Boids
             }
 
             var closestFoodIndex = GetClosestFoodSource(localToWorld.Position);
-            var closestFoodComponent = FoodSourceInformation[closestFoodIndex];
-            var closestFoodPosition = FoodSources[closestFoodIndex].Position;
-
             var foodSource = float3.zero;
-            if (closestFoodComponent.EnergyLevel > 6m)
+
+            if (closestFoodIndex != -1)
             {
-                foodSource = math.normalizesafe(closestFoodComponent.EffectivePosition(localToWorld.Position, closestFoodPosition) - localToWorld.Position, float3.zero);
+                var closestFoodComponent = FoodSourceInformation[closestFoodIndex];
+                var closestFoodPosition = FoodSources[closestFoodIndex].Position;
+
+                if (closestFoodComponent.EnergyLevel > 6m)
+                {
+                    foodSource = math.normalizesafe(closestFoodComponent.EffectivePosition(localToWorld.Position, closestFoodPosition) - localToWorld.Position, float3.zero);
+                }
             }
 
             boid.OptimalDirection = math.normalizesafe(
                 Config.AlignmentWeight * alignment +
                 Config.CohesionWeight * cohesion +
                 Config.SeparationWeight * separation +
-                // Config.StayInCubeWeight * stayInCube +
+                Config.StayInCubeWeight * stayInCube +
                 Config.FoodSourceWeight * foodSource,
                 math.normalizesafe(localToWorld.Forward));
         }
 
         private int GetClosestFoodSource(float3 boidPosition)
         {
-            var closestFoodSource = 0;
+            var closestFoodSource = -1;
             var closestDistance = float.MaxValue;
             for (var i = 0; i < FoodSources.Length; i++)
             {
