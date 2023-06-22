@@ -8,6 +8,12 @@ namespace Simulator.Configuration.Authoring
     {
         public float CageSize = 10f;
         public int SwarmSize = 100;
+        
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(Vector3.zero, new Vector3(CageSize, CageSize, CageSize));
+        }
     }
     
     public class SchoolAuthoringBaker : Baker<SchoolConfigurationComponentAuthoring>

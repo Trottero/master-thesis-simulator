@@ -18,6 +18,7 @@ namespace Simulator.Configuration.Systems
             RequireForUpdate<BoidsConfigurationComponent>();
             RequireForUpdate<EnergyConfigurationComponent>();
             RequireForUpdate<ReproductionConfigurationComponent>();
+            RequireForUpdate<SchoolConfigurationComponent>();
         }
         
         protected override void OnStartRunning()
@@ -29,7 +30,8 @@ namespace Simulator.Configuration.Systems
                 a => SetConfigurationInComponent(a.SimulationFrameworkConfiguration),
                 a => SetConfigurationInComponent(a.BoidsConfiguration),
                 a => SetConfigurationInComponent(a.EnergyConfiguration),
-                a => SetConfigurationInComponent(a.ReproductionConfiguration)
+                a => SetConfigurationInComponent(a.ReproductionConfiguration),
+                a => SetConfigurationInComponent(a.SchoolConfiguration)
             };
             
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -45,6 +47,7 @@ namespace Simulator.Configuration.Systems
                     BoidsConfiguration = SystemAPI.GetSingleton<BoidsConfigurationComponent>(),
                     EnergyConfiguration = SystemAPI.GetSingleton<EnergyConfigurationComponent>(),
                     ReproductionConfiguration = SystemAPI.GetSingleton<ReproductionConfigurationComponent>(),
+                    SchoolConfiguration = SystemAPI.GetSingleton<SchoolConfigurationComponent>()
                 });
                 ecb.Playback(EntityManager);
                 ecb.Dispose();

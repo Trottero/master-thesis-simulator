@@ -60,7 +60,11 @@ namespace Simulator.Statistics
             },
             PostAggregator = (_, stat) =>
             {
-                stat.Value = (float)((decimal)stat.StatisticBag["weight"] / stat.Query.CalculateEntityCount());
+                var count = stat.Query.CalculateEntityCount();
+                if (count > 0)
+                {
+                    stat.Value = (float)((decimal)stat.StatisticBag["weight"] / count);
+                }
             }
         };
 
