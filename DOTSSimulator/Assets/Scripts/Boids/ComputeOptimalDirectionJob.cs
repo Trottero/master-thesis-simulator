@@ -5,6 +5,8 @@ using Unity.Mathematics;
 using Unity.Collections;
 using Simulator.Curves;
 using Simulator.Boids.Energy.Producers;
+using Simulator.Configuration;
+using Simulator.Configuration.Components;
 
 namespace Simulator.Boids
 {
@@ -15,7 +17,7 @@ namespace Simulator.Boids
         [ReadOnly] public NativeArray<LocalToWorld> FoodSources;
         [ReadOnly] public NativeArray<FoodSourceComponent> FoodSourceInformation;
 
-        [ReadOnly] public BoidsConfiguration Config;
+        [ReadOnly] public BoidsConfigurationComponent Config;
 
         void Execute(
             ref BoidComponent boid,

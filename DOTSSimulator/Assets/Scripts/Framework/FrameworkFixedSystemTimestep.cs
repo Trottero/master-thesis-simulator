@@ -1,4 +1,5 @@
 ﻿using Simulator.Configuration;
+using Simulator.Configuration.Components;
 using Unity.Entities;
 using Unity.Physics.Systems;
 
@@ -7,24 +8,24 @@ namespace Framework
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class FrameworkFixedSystemTimestep: SystemBase
     {
-        private SimulationConfigurationComponent _simulationConfiguration;
+        private SimulationFrameworkConfigurationComponent _simulationFrameworkConfiguration;
 
         protected override void OnCreate()
         {
             base.OnCreate();
-            RequireForUpdate<SimulationConfigurationComponent>();
+            RequireForUpdate<SimulationFrameworkConfigurationComponent>();
         }
         
         protected override void OnStartRunning()
         {
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
+            _simulationFrameworkConfiguration = SystemAPI.GetSingleton<SimulationFrameworkConfigurationComponent>();
 
             var physicsSystemGroup = World.GetOrCreateSystemManaged<PhysicsSystemGroup>();
             physicsSystemGroup.RateManager =
-                new RateUtils.FixedRateCatchUpManager(_simulationConfiguration.EffectiveFixedSystemTimestep);
+                new RateUtils.FixedRateCatchUpManager(_simulationFrameworkConfiguration.EffectiveFixedSystemTimestep);
             
             var frameworkFixedGroup = World.GetOrCreateSystemManaged<FrameworkFixedSystemGroup>();
-            frameworkFixedGroup.RateManager = new RateUtils.FixedRateCatchUpManager(_simulationConfiguration.EffectiveFixedSystemTimestep);
+            frameworkFixedGroup.RateManager = new RateUtils.FixedRateCatchUpManager(_simulationFrameworkConfiguration.EffectiveFixedSystemTimestep);
             
             base.OnStartRunning();
         }

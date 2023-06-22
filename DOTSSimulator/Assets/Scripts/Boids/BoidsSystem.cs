@@ -8,7 +8,7 @@ using Simulator.Curves;
 using Unity.Physics;
 using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy;
-using Simulator.Configuration;
+using Simulator.Configuration.Components;
 using Unity.Burst;
 
 namespace Simulator.Boids
@@ -22,10 +22,9 @@ namespace Simulator.Boids
         private EntityQuery _boidEnergyQuery;
         private EntityQuery _boidDisplacementQuery;
         private EntityQuery _foodSourceQuery;
-        private BoidController _controller;
         private Entity _gameControllerEntity;
 
-        private SimulationConfigurationComponent _simulationConfiguration;
+        private GlobalConfigurationComponent _configurationComponent;
 
         protected override void OnCreate()
         {
@@ -55,25 +54,18 @@ namespace Simulator.Boids
                 ComponentType.ReadWrite<FoodSourceComponent>(),
                 ComponentType.ReadOnly<LocalToWorld>());
 
-            RequireForUpdate<SimulationConfigurationComponent>();
+            RequireForUpdate<GlobalConfigurationComponent>();
             RequireForUpdate(_boidQuery);
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
+            _configurationComponent = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
         }
 
         protected override void OnUpdate()
         {
-            if (!_controller)
-            {
-                _controller = BoidController.Instance;
-                return;
-            }
-
-
             // Store all of the boid positions into an array for future use
             var boidPositions = new NativeArray<BoidProperties>(_boidLocationQuery.CalculateEntityCount(), Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
             var copyBoidLocationsHandle = new CopyLocationsJob
@@ -95,7 +87,7 @@ namespace Simulator.Boids
             var optimalDirectionHandle = new ComputeOptimalDirectionJob
             {
                 OtherBoids = boidPositions,
-                Config = _controller.configuration.BoidConfig,
+                Config = _configurationComponent.BoidsConfiguration,
                 FoodSources = foodSourcePositions,
                 FoodSourceInformation = foodSourceInformation
             }.ScheduleParallel(_boidQuery, JobHandle.CombineDependencies(copyBoidLocationsHandle, copyFoodSourceLocationsHandle));
@@ -103,8 +95,8 @@ namespace Simulator.Boids
             // Use the previously computed array to update the boid locations
             var updateBoidLocationsHandle = new UpdateBoidLocationJob
             {
-                Config = _controller.configuration.BoidConfig,
-                SimulationConfig = _simulationConfiguration
+                Config = _configurationComponent.BoidsConfiguration,
+                SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration
             }.ScheduleParallel(_boidDisplacementQuery, optimalDirectionHandle);
 
             // Update the energy when close to things
@@ -112,8 +104,8 @@ namespace Simulator.Boids
             {
                 FoodSourceInformation = foodSourceInformation,
                 FoodSourceLocations = foodSourcePositions,
-                EnergyConfig = _controller.configuration.EnergyConfig,
-                SimulationConfig = _simulationConfiguration
+                EnergyConfig = _configurationComponent.EnergyConfiguration,
+                SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration
             }.Schedule(_boidEnergyQuery, updateBoidLocationsHandle);
 
             // Update the food sources

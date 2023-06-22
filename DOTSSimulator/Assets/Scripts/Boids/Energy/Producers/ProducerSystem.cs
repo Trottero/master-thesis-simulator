@@ -1,5 +1,6 @@
 using Framework;
 using Simulator.Configuration;
+using Simulator.Configuration.Components;
 using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
@@ -13,7 +14,7 @@ namespace Simulator.Boids.Energy.Producers
     [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class ProducerSystem : SystemBase
     {
-        private SimulationConfigurationComponent _simulationConfiguration;
+        private SimulationFrameworkConfigurationComponent _simulationFrameworkConfiguration;
 
         private EntityQuery _noPostTransformScaleQuery;
 
@@ -21,18 +22,18 @@ namespace Simulator.Boids.Energy.Producers
         {
             base.OnCreate();
 
-            RequireForUpdate<SimulationConfigurationComponent>();
+            RequireForUpdate<SimulationFrameworkConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
+            _simulationFrameworkConfiguration = SystemAPI.GetSingleton<SimulationFrameworkConfigurationComponent>();
         }
 
         protected override void OnUpdate()
         {
-            var dt = (decimal)_simulationConfiguration.UpdateInterval;
+            var dt = (decimal)_simulationFrameworkConfiguration.UpdateInterval;
 
             // Regenerate
             Entities.WithAll<FoodSourceComponent>().ForEach((ref FoodSourceComponent foodSource) =>

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Simulator.Boids.Lifecycle;
+using Simulator.Configuration.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -11,39 +12,39 @@ namespace Simulator.Boids.Lifecycle
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class BoidSpawningSystem : SystemBase
     {
-        private EntityQuery _schoolComponentDataQuery;
+        private GlobalConfigurationComponent _configurationComponent;
+        private Entity _schoolComponentEntity;
+        private SchoolConfigurationComponent _schoolConfigurationComponent ;
 
         protected override void OnCreate()
         {
-            _schoolComponentDataQuery = GetEntityQuery(ComponentType.ReadWrite<SchoolComponentData>());
-
-            RequireForUpdate(_schoolComponentDataQuery);
+            RequireForUpdate<SchoolConfigurationComponent>();
+            RequireForUpdate<GlobalConfigurationComponent>();
+        }
+        
+        protected override void OnStartRunning()
+        {
+            _configurationComponent = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
+            _schoolComponentEntity = SystemAPI.GetSingletonEntity<SchoolConfigurationComponent>();
+            _schoolConfigurationComponent = EntityManager.GetComponentData<SchoolConfigurationComponent>(_schoolComponentEntity);
         }
 
         protected override void OnUpdate()
         {
-            if (BoidController.Instance == null)
-            {
-                return;
-            }
-
-            var schoolEntity = _schoolComponentDataQuery.GetSingletonEntity();
-            var schoolComponentData = EntityManager.GetComponentData<SchoolComponentData>(schoolEntity);
-
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)BoidController.Instance.configuration.EnergyConfig.InitialEnergyLevel);
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)_configurationComponent.EnergyConfiguration.InitialEnergyLevel);
             new SpawnBoidsJob
             {
                 Prototype = proto,
                 Ecb = ecb.AsParallelWriter(),
-                CageSize = schoolComponentData.CageSize
-            }.Schedule(schoolComponentData.SwarmSize, 32, Dependency).Complete();
+                CageSize = _schoolConfigurationComponent.CageSize
+            }.Schedule(_schoolConfigurationComponent.SwarmSize, 32, Dependency).Complete();
 
             ecb.Playback(EntityManager);
             ecb.Dispose();
 
             EntityManager.DestroyEntity(proto);
-            EntityManager.DestroyEntity(schoolEntity);
+            EntityManager.DestroyEntity(_schoolComponentEntity);
         }
     }
 }

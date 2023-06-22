@@ -1,16 +1,14 @@
 using Framework;
-using Simulator.Configuration;
+using Simulator.Configuration.Components;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Simulator.Boids.Energy
 {
     [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class EnergySystem : SystemBase
     {
-        private BoidController _controller;
-        private SimulationConfigurationComponent _simulationConfiguration;
+        private GlobalConfigurationComponent _configurationComponent;
 
         private EntityQuery _noEnergyQuery;
 
@@ -18,26 +16,19 @@ namespace Simulator.Boids.Energy
         {
             base.OnCreate();
             _noEnergyQuery = GetEntityQuery(typeof(NoEnergyComponent));
-            RequireForUpdate<SimulationConfigurationComponent>();
-
+            RequireForUpdate<GlobalConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
+            _configurationComponent = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
             base.OnStartRunning();
         }
 
         protected override void OnUpdate()
         {
-            if (!_controller)
-            {
-                _controller = BoidController.Instance;
-                return;
-            }
-
-            var dt = (decimal)_simulationConfiguration.UpdateInterval;
-            var cr = (decimal)_controller.configuration.EnergyConfig.ConsumptionRate;
+            var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
+            var cr = (decimal)_configurationComponent.EnergyConfiguration.ConsumptionRate;
             // Update energy level
             Entities.WithAll<BoidComponent, EnergyComponent>().ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
 

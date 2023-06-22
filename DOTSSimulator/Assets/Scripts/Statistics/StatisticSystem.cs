@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Simulator.Configuration;
+using Simulator.Configuration.Components;
 using Unity.Collections;
 using Unity.Entities;
 
 namespace Simulator.Statistics
 {
-
     public class Statistic
     {
         public EntityQuery Query;
@@ -23,7 +22,7 @@ namespace Simulator.Statistics
     [UpdateInGroup(typeof(StatisticSystemGroup))]
     public partial class StatisticSystem : SystemBase
     {
-        private SimulationConfigurationComponent _simulationConfiguration;
+        private SimulationFrameworkConfigurationComponent _simulationFrameworkConfiguration;
 
         private List<Statistic> _statistics = new()
         {
@@ -53,7 +52,7 @@ namespace Simulator.Statistics
             _statisticWriter = new StatisticWriter(id, _statistics.Select(s => s.Name).ToArray());
 
             RequireForUpdate<StatisticComponentData>();
-            RequireForUpdate<SimulationConfigurationComponent>();
+            RequireForUpdate<GlobalConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
@@ -61,7 +60,7 @@ namespace Simulator.Statistics
             base.OnStartRunning();
 
             _statisticEntity = SystemAPI.GetSingletonEntity<StatisticComponentData>();
-            _simulationConfiguration = SystemAPI.GetSingleton<SimulationConfigurationComponent>();
+            _simulationFrameworkConfiguration = SystemAPI.GetSingleton<GlobalConfigurationComponent>().SimulationFrameworkConfiguration;
 
             // Init all statistics
             foreach (var statistic in _statistics)
@@ -75,7 +74,7 @@ namespace Simulator.Statistics
             var statistics = EntityManager.GetComponentData<StatisticComponentData>(_statisticEntity);
             if (statistics.Step != 0)
             {
-                EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep});
+                EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationFrameworkConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep});
                 return;
             }
             
@@ -113,7 +112,7 @@ namespace Simulator.Statistics
 
             _statisticWriter.Write(values.Select(x => x.ToString()).ToArray());
             
-            EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep + 1});
+            EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (3600 / (long)_simulationFrameworkConfiguration.MaxSimulationSpeed), MetaStep = statistics.MetaStep + 1});
         }
     }
 }

@@ -1,9 +1,9 @@
-using Unity.Burst;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
-using Unity.Mathematics;
-using Simulator.Configuration;
+using Simulator.Configuration.Components;
+using Unity.Burst;
+using UnityEngine.Serialization;
 
 namespace Simulator.Boids.Energy.Producers
 {
@@ -12,8 +12,8 @@ namespace Simulator.Boids.Energy.Producers
     {
         public NativeArray<FoodSourceComponent> FoodSourceInformation;
         [ReadOnly] public NativeArray<LocalToWorld> FoodSourceLocations;
-        [ReadOnly] public EnergyConfiguration EnergyConfig;
-        [ReadOnly] public SimulationConfigurationComponent SimulationConfig;
+        [ReadOnly] public EnergyConfigurationComponent EnergyConfig;
+        [FormerlySerializedAs("SimulationConfig")] [ReadOnly] public SimulationFrameworkConfigurationComponent SimulationFrameworkConfig;
 
         void Execute(ref EnergyComponent boidEnergy, in LocalToWorld boidLocation)
         {
@@ -31,7 +31,7 @@ namespace Simulator.Boids.Energy.Producers
                 if (distance < 1f)
                 {
                     // Assimilation rate is 1f
-                    var consumed = (decimal)EnergyConfig.FeedingRate * (decimal)SimulationConfig.UpdateInterval;
+                    var consumed = (decimal)EnergyConfig.FeedingRate * (decimal)SimulationFrameworkConfig.UpdateInterval;
                     // Add energy to boid
                     boidEnergy.Weight += consumed;
                     // Remove energy from food source

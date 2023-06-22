@@ -2,6 +2,7 @@ using Framework;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Lifecycle;
+using Simulator.Configuration.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -12,33 +13,31 @@ namespace Boids.Energy
     [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class ReproductionSystem : SystemBase
     {
-        private BoidController _controller;
-        private Entity _gameControllerEntity;
-
         private EntityQuery _shouldReproduceQuery;
+        private GlobalConfigurationComponent _configurationComponent;
 
         protected override void OnCreate()
         {
             base.OnCreate();
-
             _shouldReproduceQuery = GetEntityQuery(ComponentType.ReadOnly<ShouldReproduceComponent>());
+            RequireForUpdate<GlobalConfigurationComponent>();
+        }
+
+        protected override void OnStartRunning()
+        {
+            base.OnStartRunning();
+            _configurationComponent = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
         }
 
         protected override void OnUpdate()
         {
-            if (!_controller)
-            {
-                _controller = BoidController.Instance;
-                return;
-            }
-            
             // Do not update system if disabled.
-            if (!_controller.configuration.ReproductionConfig.ReproductionEnabled)
+            if (!_configurationComponent.ReproductionConfiguration.ReproductionEnabled)
             {
                 return;
             }
 
-            var reproductionConfig = _controller.configuration.ReproductionConfig;
+            var reproductionConfig = _configurationComponent.ReproductionConfiguration;
 
             // Mark entities with energy level above threshold for reproduction
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -68,7 +67,7 @@ namespace Boids.Energy
             ecb = new EntityCommandBuffer(Allocator.TempJob);
             
             // Spawn simple prototype
-            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)_controller.configuration.ReproductionConfig.OffspringWeight);
+            var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)reproductionConfig.OffspringWeight);
             
             new SpawnBoidsJob
             {

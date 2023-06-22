@@ -1,11 +1,10 @@
 using UnityEngine;
 using System;
-using UnityEngine.Serialization;
 
 namespace Simulator.Boids
 {
 
-    public partial class BoidController : MonoBehaviour
+    public class BoidController : MonoBehaviour
     {
         public float CageSize = 10f;
         public int SwarmSize = 100;
@@ -27,8 +26,7 @@ namespace Simulator.Boids
             Gizmos.DrawWireCube(Vector3.zero, new Vector3(CageSize, CageSize, CageSize));
         }
     }
-
-
+    
     [Serializable]
     public class GlobalConfiguration
     {
