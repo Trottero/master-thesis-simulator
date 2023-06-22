@@ -9,5 +9,6 @@ namespace Simulator.Configuration.Components
         public EnergyConfigurationComponent EnergyConfiguration;
         public ReproductionConfigurationComponent ReproductionConfiguration;
         public SchoolConfigurationComponent SchoolConfiguration;
+        public FoodSourcesConfigurationComponent FoodSourcesConfiguration;
     }
 }

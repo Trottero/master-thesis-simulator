@@ -1,15 +1,12 @@
-using Framework;
-using Simulator.Configuration;
+using Simulator.Boids.Energy.Producers.Components;
 using Simulator.Configuration.Components;
+using Simulator.Framework;
 using Simulator.Utils;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
-
-namespace Simulator.Boids.Energy.Producers
+namespace Simulator.Boids.Energy.Producers.Systems
 {
     [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class ProducerSystem : SystemBase

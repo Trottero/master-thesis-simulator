@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Physics.Systems;
 
-namespace Framework
+namespace Simulator.Framework
 {
     [UpdateInGroup(typeof (FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(PhysicsSystemGroup))]

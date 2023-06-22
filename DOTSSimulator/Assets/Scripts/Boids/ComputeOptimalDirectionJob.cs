@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.Collections;
 using Simulator.Curves;
 using Simulator.Boids.Energy.Producers;
+using Simulator.Boids.Energy.Producers.Components;
 using Simulator.Configuration;
 using Simulator.Configuration.Components;
 

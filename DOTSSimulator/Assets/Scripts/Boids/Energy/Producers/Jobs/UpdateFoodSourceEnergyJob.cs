@@ -1,8 +1,9 @@
+using Simulator.Boids.Energy.Producers.Components;
 using Unity.Burst;
-using Unity.Entities;
 using Unity.Collections;
+using Unity.Entities;
 
-namespace Simulator.Boids.Energy.Producers
+namespace Simulator.Boids.Energy.Producers.Jobs
 {
     [BurstCompile]
     public partial struct UpdateFoodSourceEnergyJob : IJobEntity

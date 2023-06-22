@@ -1,11 +1,12 @@
-using Unity.Entities;
-using Unity.Transforms;
-using Unity.Collections;
+using Simulator.Boids.Energy.Producers.Components;
 using Simulator.Configuration.Components;
 using Unity.Burst;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine.Serialization;
 
-namespace Simulator.Boids.Energy.Producers
+namespace Simulator.Boids.Energy.Producers.Jobs
 {
     [BurstCompile]
     public partial struct UpdateFishEnergyJob : IJobEntity

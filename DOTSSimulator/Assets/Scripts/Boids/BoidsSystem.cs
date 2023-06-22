@@ -1,4 +1,3 @@
-using Framework;
 using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
@@ -6,10 +5,12 @@ using Unity.Jobs;
 using Unity.Transforms;
 using Simulator.Curves;
 using Unity.Physics;
-using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy;
+using Simulator.Boids.Energy.Producers.Components;
 using Simulator.Configuration.Components;
+using Simulator.Framework;
 using Unity.Burst;
+using Simulator.Boids.Energy.Producers.Jobs;
 
 namespace Simulator.Boids
 {

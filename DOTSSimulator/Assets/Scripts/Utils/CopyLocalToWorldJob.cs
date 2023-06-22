@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Collections;
 using Simulator.Boids.Energy.Producers;
+using Simulator.Boids.Energy.Producers.Components;
 
 namespace Simulator.Utils
 {

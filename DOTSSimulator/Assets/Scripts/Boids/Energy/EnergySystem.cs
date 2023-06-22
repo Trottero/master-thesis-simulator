@@ -1,5 +1,5 @@
-using Framework;
 using Simulator.Configuration.Components;
+using Simulator.Framework;
 using Unity.Collections;
 using Unity.Entities;
 

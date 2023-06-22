@@ -1,8 +1,8 @@
-using Framework;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Lifecycle;
 using Simulator.Configuration.Components;
+using Simulator.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
 using Simulator.Boids.Energy.Producers;
+using Simulator.Boids.Energy.Producers.Components;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;

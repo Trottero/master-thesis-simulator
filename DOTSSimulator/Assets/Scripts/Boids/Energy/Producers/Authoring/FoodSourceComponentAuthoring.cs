@@ -1,11 +1,10 @@
+using Simulator.Boids.Energy.Producers.Components;
 using Unity.Entities;
-using Unity.Rendering;
-using Unity.Transforms;
 using UnityEngine;
 
-namespace Simulator.Boids.Energy.Producers
+namespace Simulator.Boids.Energy.Producers.Authoring
 {
-    public class FoodSourceConverter : MonoBehaviour
+    public class FoodSourceComponentAuthoring : MonoBehaviour
     {
         public double InitialEnergyLevel = 100d;
 
@@ -14,9 +13,9 @@ namespace Simulator.Boids.Energy.Producers
         public double MaxEnergyLevel = 100d;
     }
 
-    public class FoodSourceConverterBaker : Baker<FoodSourceConverter>
+    public class FoodSourceConverterBaker : Baker<FoodSourceComponentAuthoring>
     {
-        public override void Bake(FoodSourceConverter authoring)
+        public override void Bake(FoodSourceComponentAuthoring authoring)
         {
             var foodSource = new FoodSourceComponent
             {

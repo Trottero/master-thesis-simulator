@@ -1,9 +1,8 @@
-﻿using Simulator.Configuration;
-using Simulator.Configuration.Components;
+﻿using Simulator.Configuration.Components;
 using Unity.Entities;
 using Unity.Physics.Systems;
 
-namespace Framework
+namespace Simulator.Framework
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial class FrameworkFixedSystemTimestep: SystemBase

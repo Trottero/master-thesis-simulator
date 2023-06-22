@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Simulator.Boids.Energy.Producers
+namespace Simulator.Boids.Energy.Producers.Components
 {
     public struct FoodSourceComponent : IComponentData
     {
