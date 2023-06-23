@@ -7,20 +7,25 @@ namespace Simulator.Configuration.Authoring
     public class FoodSourcesConfigurationComponentAuthoring : MonoBehaviour
     {
         public int NumberOfFoodSources;
-        public GameObject FoodSourcePrefab;
+        public double EnergyLevel;
+        public double RegenarationRate;
+        public double MaxEnergyLevel;
+        public float FeedingRadius;
     }
     
     public class FoodSourcesConfigurationComponentBaker : Baker<FoodSourcesConfigurationComponentAuthoring>
     {
         public override void Bake(FoodSourcesConfigurationComponentAuthoring authoring)
         {
-            var prefabEntity = GetEntity(authoring.FoodSourcePrefab, TransformUsageFlags.Dynamic);
             var entity = GetEntity(authoring, TransformUsageFlags.None);
             
             AddComponent(entity, new FoodSourcesConfigurationComponent
             {
                 NumberOfFoodSources = authoring.NumberOfFoodSources,
-                FoodSourcePrefab = prefabEntity
+                EnergyLevel = (decimal)authoring.EnergyLevel,
+                RegenarationRate = (decimal)authoring.RegenarationRate,
+                MaxEnergyLevel = (decimal)authoring.MaxEnergyLevel,
+                FeedingRadius = authoring.FeedingRadius
             });
         }
     }

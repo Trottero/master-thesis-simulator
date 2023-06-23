@@ -168,29 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1667b57a74e560746b824bf51ea73b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CageSize: 10
-  SwarmSize: 100
   BoidMesh: {fileID: -5495902117074765545, guid: 4e959259a1474304b9693007c6f40237, type: 3}
   BoidMaterial: {fileID: 2100000, guid: b69f1e29331ed4c41a766fd13baf5e08, type: 2}
-  configuration:
-    BoidConfig:
-      Speed: 0.84
-      RotationSpeed: 120
-      PerceptionRange: 10
-      SeparationWeight: 1
-      CohesionWeight: 1
-      AlignmentWeight: 1
-      StayInCubeWeight: 1
-      FoodSourceWeight: 2
-    EnergyConfig:
-      InitialEnergyLevel: 384
-      ConsumptionRate: 0.000006462191358024691
-      FeedingRate: 0.00003028549382716049
-    ReproductionConfig:
-      MinWeightForReproduction: 500
-      ReproductionWeightLoss: 200
-      OffspringWeight: 200
-      ReproductionEnabled: 1
 --- !u!114 &429673570
 MonoBehaviour:
   m_ObjectHideFlags: 0
