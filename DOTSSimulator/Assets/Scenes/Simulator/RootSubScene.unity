@@ -488,7 +488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NumberOfFoodSources: 4
   EnergyLevel: 50
-  RegenarationRate: 0.00016155478395061726
+  RegenarationRate: 0.00018928433641975307
   MaxEnergyLevel: 50
   FeedingRadius: 0
 --- !u!1 &1400816239

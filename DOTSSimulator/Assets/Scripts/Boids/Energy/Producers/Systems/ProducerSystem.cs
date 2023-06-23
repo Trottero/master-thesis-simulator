@@ -9,6 +9,7 @@ using Unity.Transforms;
 namespace Simulator.Boids.Energy.Producers.Systems
 {
     [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
+    [UpdateAfter(typeof(BoidsSystem))]
     public partial class ProducerSystem : SystemBase
     {
         private SimulationFrameworkConfigurationComponent _simulationFrameworkConfiguration;
