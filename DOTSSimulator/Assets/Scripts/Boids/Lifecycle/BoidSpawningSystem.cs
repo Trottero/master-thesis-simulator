@@ -1,36 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
-using Simulator.Boids.Lifecycle;
 using Simulator.Configuration.Components;
+using Simulator.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
-using UnityEngine;
 
 namespace Simulator.Boids.Lifecycle
 {
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class BoidSpawningSystem : SystemBase
     {
         private GlobalConfigurationComponent _configurationComponent;
-        private Entity _schoolComponentEntity;
-        private SchoolConfigurationComponent _schoolConfigurationComponent ;
+        private SchoolConfigurationComponent _schoolConfigurationComponent;
 
         protected override void OnCreate()
         {
-            RequireForUpdate<SchoolConfigurationComponent>();
             RequireForUpdate<GlobalConfigurationComponent>();
         }
         
         protected override void OnStartRunning()
         {
+            base.OnStartRunning();
+            
             _configurationComponent = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
-            _schoolComponentEntity = SystemAPI.GetSingletonEntity<SchoolConfigurationComponent>();
-            _schoolConfigurationComponent = EntityManager.GetComponentData<SchoolConfigurationComponent>(_schoolComponentEntity);
-        }
-
-        protected override void OnUpdate()
-        {
+            _schoolConfigurationComponent = _configurationComponent.SchoolConfiguration;
+            
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
             var proto = BoidSpawningHelper.SpawnPrototype(EntityManager, (decimal)_configurationComponent.EnergyConfiguration.InitialEnergyLevel);
             new SpawnBoidsJob
@@ -44,7 +37,10 @@ namespace Simulator.Boids.Lifecycle
             ecb.Dispose();
 
             EntityManager.DestroyEntity(proto);
-            EntityManager.DestroyEntity(_schoolComponentEntity);
+        }
+
+        protected override void OnUpdate()
+        {
         }
     }
 }

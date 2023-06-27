@@ -6,7 +6,7 @@ namespace Simulator.Boids.Energy.Producers.Components
     public struct FoodSourceComponent : IComponentData
     {
         public decimal EnergyLevel;
-        public decimal RegenarationRate;
+        public decimal RegenerationRate;
         public decimal MaxEnergyLevel;
         public float FeedingRadius;
         public float EffectiveSize => (float)EnergyLevel / 10f;

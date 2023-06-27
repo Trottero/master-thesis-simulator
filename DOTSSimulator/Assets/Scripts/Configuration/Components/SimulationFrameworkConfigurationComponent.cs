@@ -2,6 +2,7 @@
 
 namespace Simulator.Configuration.Components
 {
+    [System.Serializable]
     public struct SimulationFrameworkConfigurationComponent : IComponentData
     {
         public float UpdatesPerSecond;

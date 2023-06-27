@@ -2,6 +2,7 @@
 
 namespace Simulator.Configuration.Components
 {
+    [System.Serializable]
     public struct BoidsConfigurationComponent: IComponentData
     {
         public float Speed;

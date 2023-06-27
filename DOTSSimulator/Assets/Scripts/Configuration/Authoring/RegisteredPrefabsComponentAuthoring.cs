@@ -14,7 +14,7 @@ namespace Simulator.Configuration.Authoring
         public override void Bake(RegisteredPrefabsComponentAuthoring authoring)
         {
             var entity = GetEntity(authoring, TransformUsageFlags.None);
-            var prefabEntity = GetEntity(authoring.FoodSourcePrefab, TransformUsageFlags.Dynamic);
+            var prefabEntity = GetEntity(authoring.FoodSourcePrefab, TransformUsageFlags.Dynamic | TransformUsageFlags.NonUniformScale);
             
             AddComponent(entity, new RegisteredPrefabsComponent
             {

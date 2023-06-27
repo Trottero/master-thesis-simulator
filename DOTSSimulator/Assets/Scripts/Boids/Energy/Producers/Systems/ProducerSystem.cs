@@ -14,19 +14,16 @@ namespace Simulator.Boids.Energy.Producers.Systems
     {
         private SimulationFrameworkConfigurationComponent _simulationFrameworkConfiguration;
 
-        private EntityQuery _noPostTransformScaleQuery;
-
         protected override void OnCreate()
         {
             base.OnCreate();
-
-            RequireForUpdate<SimulationFrameworkConfigurationComponent>();
+            RequireForUpdate<GlobalConfigurationComponent>();
         }
 
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _simulationFrameworkConfiguration = SystemAPI.GetSingleton<SimulationFrameworkConfigurationComponent>();
+            _simulationFrameworkConfiguration = SystemAPI.GetSingleton<GlobalConfigurationComponent>().SimulationFrameworkConfiguration;
         }
 
         protected override void OnUpdate()
@@ -36,16 +33,16 @@ namespace Simulator.Boids.Energy.Producers.Systems
             // Regenerate
             Entities.WithAll<FoodSourceComponent>().ForEach((ref FoodSourceComponent foodSource) =>
             {
-                foodSource.EnergyLevel = Mathm.Clamp(foodSource.EnergyLevel + foodSource.RegenarationRate * dt, 0m,
+                foodSource.EnergyLevel = Mathm.Clamp(foodSource.EnergyLevel + foodSource.RegenerationRate * dt, 0m,
                     foodSource.MaxEnergyLevel);
-            }).ScheduleParallel();
+            }).Run();
 
             // Let scale reflect energy level
             Entities.WithAll<FoodSourceComponent, PostTransformMatrix>()
-                .ForEach((ref PostTransformMatrix scale, in FoodSourceComponent foodSource) =>
-                {
-                    scale.Value = float4x4.Scale(new float3(0.1f, foodSource.EffectiveSize, 0.1f));
-                }).ScheduleParallel();
+            .ForEach((ref PostTransformMatrix scale, in FoodSourceComponent foodSource) =>
+            {
+                scale.Value = float4x4.Scale(new float3(0.1f, foodSource.EffectiveSize, 0.1f));
+            }).Run();
         }
     }
 }

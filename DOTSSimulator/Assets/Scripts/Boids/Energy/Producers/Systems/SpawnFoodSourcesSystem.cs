@@ -1,13 +1,17 @@
 ﻿using Simulator.Boids.Energy.Producers.Components;
+using Simulator.Boids.Lifecycle;
 using Simulator.Configuration.Components;
-using Unity.Collections;
+using Simulator.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 namespace Simulator.Boids.Energy.Producers.Systems
 {
+    [UpdateBefore(typeof(BoidSpawningSystem))]
+    [UpdateInGroup(typeof(FrameworkFixedSystemGroup))]
     public partial class SpawnFoodSourcesSystem : SystemBase
     {
         private FoodSourcesConfigurationComponent _foodSourcesConfiguration;
@@ -24,33 +28,36 @@ namespace Simulator.Boids.Energy.Producers.Systems
         protected override void OnStartRunning()
         {
             base.OnStartRunning();
-            _foodSourcesConfiguration = SystemAPI.GetSingleton<FoodSourcesConfigurationComponent>();
-            _schoolConfiguration = SystemAPI.GetSingleton<SchoolConfigurationComponent>();
+            var globalConfig = SystemAPI.GetSingleton<GlobalConfigurationComponent>();
+            
+            _foodSourcesConfiguration = globalConfig.FoodSourcesConfiguration;
+            _schoolConfiguration = globalConfig.SchoolConfiguration;
             _registeredPrefabs = SystemAPI.GetSingleton<RegisteredPrefabsComponent>();
 
             var rng = new Random(1);
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
             for (var i = 0; i < _foodSourcesConfiguration.NumberOfFoodSources; i++)
             {
-                var entity = ecb.Instantiate(_registeredPrefabs.FoodSourcePrefab);
-                ecb.SetComponent(entity, new LocalTransform
+                
+                var entity = EntityManager.Instantiate(_registeredPrefabs.FoodSourcePrefab);
+                var position = new float3(rng.NextFloat(), -1, rng.NextFloat()) * _schoolConfiguration.CageSize / 2;
+                Debug.Log("Spawned food source at " + position);
+                EntityManager.SetComponentData(entity, new LocalTransform
                 {
-                    Position = new float3(rng.NextFloat(), -1, rng.NextFloat()) * _schoolConfiguration.CageSize / 2,
+                    Position = position,
                     Rotation = quaternion.identity,
                     Scale = 1
                 });
+                
+                Debug.Log("Spawned food source at " + position);
 
-                ecb.SetComponent(entity, new FoodSourceComponent
+                EntityManager.SetComponentData(entity, new FoodSourceComponent
                 {
-                    EnergyLevel = _foodSourcesConfiguration.EnergyLevel,
-                    RegenarationRate = _foodSourcesConfiguration.RegenarationRate,
-                    MaxEnergyLevel = _foodSourcesConfiguration.MaxEnergyLevel,
+                    EnergyLevel = (decimal)_foodSourcesConfiguration.EnergyLevel,
+                    RegenerationRate = (decimal)_foodSourcesConfiguration.RegenerationRate,
+                    MaxEnergyLevel = (decimal)_foodSourcesConfiguration.MaxEnergyLevel,
                     FeedingRadius = _foodSourcesConfiguration.FeedingRadius
                 });
             }
-
-            ecb.Playback(EntityManager);
-            ecb.Dispose();
         }
 
         protected override void OnUpdate()

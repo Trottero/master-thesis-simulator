@@ -20,7 +20,7 @@ namespace Simulator.Boids.Energy.Producers.Authoring
             var foodSource = new FoodSourceComponent
             {
                 EnergyLevel = (decimal)authoring.InitialEnergyLevel,
-                RegenarationRate = (decimal)authoring.RegenerationRate,
+                RegenerationRate = (decimal)authoring.RegenerationRate,
                 MaxEnergyLevel = (decimal)authoring.MaxEnergyLevel
             };
 

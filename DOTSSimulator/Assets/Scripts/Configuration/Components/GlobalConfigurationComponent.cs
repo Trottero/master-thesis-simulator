@@ -2,6 +2,7 @@ using Unity.Entities;
 
 namespace Simulator.Configuration.Components
 {
+    [System.Serializable]
     public struct GlobalConfigurationComponent : IComponentData
     {
         public SimulationFrameworkConfigurationComponent SimulationFrameworkConfiguration;

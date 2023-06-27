@@ -8,7 +8,7 @@ namespace Simulator.Configuration.Authoring
     {
         public int NumberOfFoodSources;
         public double EnergyLevel;
-        public double RegenarationRate;
+        public double RegenerationRate;
         public double MaxEnergyLevel;
         public float FeedingRadius;
     }
@@ -22,9 +22,9 @@ namespace Simulator.Configuration.Authoring
             AddComponent(entity, new FoodSourcesConfigurationComponent
             {
                 NumberOfFoodSources = authoring.NumberOfFoodSources,
-                EnergyLevel = (decimal)authoring.EnergyLevel,
-                RegenarationRate = (decimal)authoring.RegenarationRate,
-                MaxEnergyLevel = (decimal)authoring.MaxEnergyLevel,
+                EnergyLevel = authoring.EnergyLevel,
+                RegenerationRate = authoring.RegenerationRate,
+                MaxEnergyLevel = authoring.MaxEnergyLevel,
                 FeedingRadius = authoring.FeedingRadius
             });
         }
