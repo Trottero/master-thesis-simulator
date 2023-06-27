@@ -29,7 +29,7 @@ namespace Simulator.Boids.Energy.Producers.Jobs
                 var foodSourceLocation = FoodSourceLocations[i];
 
                 var distance = foodSource.EffectiveDistance(boidLocation.Position, foodSourceLocation.Position);
-                if (distance < 1f)
+                if (distance < foodSource.FeedingRadius)
                 {
                     // Assimilation rate is 1f
                     var consumed = (decimal)EnergyConfig.FeedingRate * (decimal)SimulationFrameworkConfig.UpdateInterval;
