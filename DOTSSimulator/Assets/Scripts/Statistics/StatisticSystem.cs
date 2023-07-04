@@ -32,6 +32,8 @@ namespace Simulator.Statistics
             Metrics.StatisticStep,
             Metrics.TimeStamp,
             Metrics.AverageEnergy,
+            Metrics.AverageEnergy5thPercentile,
+            Metrics.AverageEnergy95thPercentile,
             Metrics.NumberOfBoids,
             Metrics.NumberOfFoodSources,
             Metrics.TotalFoodAvailable,

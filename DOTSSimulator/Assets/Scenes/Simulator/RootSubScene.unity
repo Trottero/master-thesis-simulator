@@ -490,7 +490,7 @@ MonoBehaviour:
   EnergyLevel: 50
   RegenerationRate: 0
   MaxEnergyLevel: 50
-  FeedingRadius: 0
+  FeedingRadius: 1
 --- !u!1 &1400816239
 GameObject:
   m_ObjectHideFlags: 0

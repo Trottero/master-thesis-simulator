@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Simulator.Boids;
 using Simulator.Boids.Energy;
-using Simulator.Boids.Energy.Producers;
 using Simulator.Boids.Energy.Producers.Components;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -66,6 +65,26 @@ namespace Simulator.Statistics
                 {
                     stat.Value = (float)((decimal)stat.StatisticBag["weight"] / count);
                 }
+            }
+        };
+
+        public static readonly Statistic AverageEnergy5thPercentile = new NthPercentileStatistic(0.05f,
+            (system, entity) => (float)system.EntityManager.GetComponentData<EnergyComponent>(entity).Weight)
+        {
+            Name = "AverageEnergy_5th",
+            Init = (statisticSystem, statistic) =>
+            {
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent));
+            }
+        };
+        
+        public static readonly Statistic AverageEnergy95thPercentile = new NthPercentileStatistic(0.95f,
+            (system, entity) => (float)system.EntityManager.GetComponentData<EnergyComponent>(entity).Weight)
+        {
+            Name = "AverageEnergy_95th",
+            Init = (statisticSystem, statistic) =>
+            {
+                statistic.Query = statisticSystem.GetEntityQuery(typeof(BoidComponent));
             }
         };
 
