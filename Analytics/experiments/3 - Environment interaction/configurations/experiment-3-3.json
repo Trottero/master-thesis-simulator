@@ -1,7 +1,7 @@
 ﻿{
   "SimulationFrameworkConfiguration": {
     "UpdatesPerSecond": 5,
-    "MaxSimulationSpeed": 120
+    "MaxSimulationSpeed": 60
   },
   "BoidsConfiguration": {
     "Speed": 0.84,
@@ -16,7 +16,7 @@
   "EnergyConfiguration": {
     "InitialEnergyLevel": 384,
     "ConsumptionRate": 0.0000064621913580246909,
-    "FeedingRate": 0.00004926259180867849
+    "FeedingRate": 0.000037556726282976784
   },
   "ReproductionConfiguration": {
     "MinWeightForReproduction": 500,

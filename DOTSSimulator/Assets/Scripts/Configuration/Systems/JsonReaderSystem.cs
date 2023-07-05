@@ -65,7 +65,7 @@ namespace Simulator.Configuration.Systems
             }
             // Get the path
             var pathArg = args[index + 1];
-            var path = Path.Combine(Application.dataPath, pathArg);
+            var path = UriUtility.Combine(Directory.GetCurrentDirectory(), pathArg);
             // Read the JSON file
             if (!File.Exists(path))
             {
@@ -94,5 +94,35 @@ namespace Simulator.Configuration.Systems
         {
             
         }
+    }
+    
+    public static class UriUtility
+    {
+        public static string Combine(string basePath, string relativePath)
+        {
+            var baseUri = new Uri(ExpandUri(basePath), UriKind.Absolute);
+            var relativeUri = new Uri(relativePath, UriKind.RelativeOrAbsolute);
+
+            var result = baseUri.IsAbsoluteUri ? baseUri.GetLeftPart(UriPartial.Query) : baseUri.ToString();
+            result += result.EndsWith("/") ? "" : "/";
+            result += relativeUri.IsAbsoluteUri ? relativeUri.PathAndQuery : relativeUri.ToString();
+
+            return ExpandUri(result);
+        }
+        private static string ExpandUri(string path)
+        {
+            var uri = new Uri(path, UriKind.RelativeOrAbsolute);
+
+            if (uri.IsAbsoluteUri)
+            {
+                if (uri.IsFile) return uri.LocalPath;
+                return uri.AbsoluteUri;
+            }
+
+            if (File.Exists(path) || Directory.Exists(path)) return Path.GetFullPath(path);
+
+            return path;
+        }
+
     }
 }
