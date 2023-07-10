@@ -43,7 +43,7 @@ namespace Simulator.Boids.Energy
             // Update energy level
             
             Entities.WithAll<BoidComponent, EnergyComponent>().WithoutBurst()
-                .ForEach((ref EnergyComponent energy) => energy.Weight = getNextWeight(energy.Weight, dt, cr))
+                .ForEach((ref EnergyComponent energy) => energy.Weight = getNextWeight(energy.Weight, dt))
                 .Run();
             
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -62,13 +62,13 @@ namespace Simulator.Boids.Energy
 
         }
         
-        private decimal getNextWeight(decimal weight, decimal dt, decimal cr)
+        private decimal getNextWeight(decimal weight, decimal dt)
         {
             var W = weight;
             var Pred_E_i = (decimal)getPredatorDensity(weight, _config.Alpha1, _config.Beta1);
 
             var mean_prey_ED = 1f; // We fix this to one, our prey is extremely dense.
-            var Ration_prey = 1f;
+            var Ration_prey = 100f;
             var Cons = (Ration_prey / (float)W) * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
             var Cons_p1 = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
             var pvalue = Cons / Cons_p1;
@@ -81,10 +81,12 @@ namespace Simulator.Boids.Energy
             var G = Cons - (Res + Eg + Ex + SpecDA);
                 
             var spawn = 0;
-            var egain = (decimal)G * W * cr * dt;
+            var egain = (decimal)G * W;
             var SpawnE = spawn * W * Pred_E_i;
             var finalwt = Mathm.Power((egain - SpawnE + Pred_E_i * W) / (decimal)_config.Alpha1, 1 / (decimal)(_config.Beta1 + 1));
-            return finalwt;
+            // Full day
+            var gain = finalwt - W;
+            return W + gain / 24 / 60 / 60 * dt;
         }
         
         private float consumption(float temperature, float weight, float pvalue)
