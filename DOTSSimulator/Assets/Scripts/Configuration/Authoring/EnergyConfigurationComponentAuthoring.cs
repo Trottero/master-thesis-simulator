@@ -9,6 +9,7 @@ namespace Simulator.Configuration.Authoring
         public double InitialEnergyLevel;
         public double ConsumptionRate;
         public double FeedingRate;
+        public EnergyEquationType EnergyEquation;
 
     }
     public class EnergyConfigurationComponentBaker : Baker<EnergyConfigurationComponentAuthoring>
@@ -19,7 +20,8 @@ namespace Simulator.Configuration.Authoring
             {
                 InitialEnergyLevel = authoring.InitialEnergyLevel,
                 ConsumptionRate = authoring.ConsumptionRate,
-                FeedingRate = authoring.FeedingRate
+                FeedingRate = authoring.FeedingRate,
+                EnergyEquation = authoring.EnergyEquation
             };
             
             var entity = GetEntity(authoring, TransformUsageFlags.None);

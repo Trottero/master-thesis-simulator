@@ -1,3 +1,4 @@
+using Simulator.Configuration;
 using Simulator.Configuration.Components;
 using Simulator.Framework;
 using Unity.Collections;
@@ -27,6 +28,11 @@ namespace Simulator.Boids.Energy
 
         protected override void OnUpdate()
         {
+            if (_configurationComponent.EnergyConfiguration.EnergyEquation != EnergyEquationType.Linear)
+            {
+                return;
+            }
+
             var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
             var cr = (decimal)_configurationComponent.EnergyConfiguration.ConsumptionRate;
             // Update energy level

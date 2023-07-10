@@ -123,6 +123,74 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &164800930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 164800931}
+  - component: {fileID: 164800932}
+  m_Layer: 0
+  m_Name: RainbowTroutEnergy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &164800931
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164800930}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 722219050}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &164800932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164800930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb637a51b1e84121958971a37d91cc41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rtm: 26
+  Rto: 22
+  Ra: 0.013
+  Rq: 2.2
+  Rb: -0.217
+  Act: 1.3
+  Sda: 0.172
+  Alpha1: 5763
+  Beta1: 0.986
+  Oxycal: 13560
+  Ua: 0.0314
+  Ub: 0.58
+  Ug: -0.299
+  Cq: 3.5
+  Ca: 0.628
+  Cb: -0.3
+  Ck1: 0.2
+  Ck4: 0.2
+  Ctl: 24.3
+  Cto: 25
+  Ctm: 22.5
+  Fa: 0.212
+  Fb: -0.222
+  Fg: 0.631
 --- !u!1 &180600706
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,6 +427,7 @@ MonoBehaviour:
   InitialEnergyLevel: 384
   ConsumptionRate: 0.000006462191358024691
   FeedingRate: 0.00003028549382716049
+  EnergyEquation: 1
 --- !u!1 &722219049
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +462,7 @@ Transform:
   - {fileID: 2132457813}
   - {fileID: 180600707}
   - {fileID: 1051688693}
+  - {fileID: 164800931}
   - {fileID: 863928212}
   m_Father: {fileID: 0}
   m_RootOrder: 3

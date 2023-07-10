@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using UnityEngine;
 
 namespace Simulator.Configuration.Components
 {
@@ -8,5 +9,6 @@ namespace Simulator.Configuration.Components
         public double InitialEnergyLevel;
         public double ConsumptionRate;
         public double FeedingRate;
+        public EnergyEquationType EnergyEquation;
     }
 }

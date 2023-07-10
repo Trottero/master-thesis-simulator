@@ -11,5 +11,6 @@ namespace Simulator.Configuration.Components
         public ReproductionConfigurationComponent ReproductionConfiguration;
         public SchoolConfigurationComponent SchoolConfiguration;
         public FoodSourcesConfigurationComponent FoodSourcesConfiguration;
+        public RainbowTroutEnergyConfigurationComponent RainbowTroutEnergyConfiguration;
     }
 }

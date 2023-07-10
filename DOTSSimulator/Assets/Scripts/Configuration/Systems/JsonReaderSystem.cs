@@ -20,6 +20,7 @@ namespace Simulator.Configuration.Systems
             RequireForUpdate<ReproductionConfigurationComponent>();
             RequireForUpdate<SchoolConfigurationComponent>();
             RequireForUpdate<FoodSourcesConfigurationComponent>();
+            RequireForUpdate<RainbowTroutEnergyConfigurationComponent>();
         }
         
         protected override void OnStartRunning()
@@ -33,7 +34,8 @@ namespace Simulator.Configuration.Systems
                 a => SetConfigurationInComponent(a.EnergyConfiguration),
                 a => SetConfigurationInComponent(a.ReproductionConfiguration),
                 a => SetConfigurationInComponent(a.SchoolConfiguration),
-                a => SetConfigurationInComponent(a.FoodSourcesConfiguration)
+                a => SetConfigurationInComponent(a.FoodSourcesConfiguration),
+                a => SetConfigurationInComponent(a.RainbowTroutEnergyConfiguration)
             };
             
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -50,7 +52,8 @@ namespace Simulator.Configuration.Systems
                     EnergyConfiguration = SystemAPI.GetSingleton<EnergyConfigurationComponent>(),
                     ReproductionConfiguration = SystemAPI.GetSingleton<ReproductionConfigurationComponent>(),
                     SchoolConfiguration = SystemAPI.GetSingleton<SchoolConfigurationComponent>(),
-                    FoodSourcesConfiguration = SystemAPI.GetSingleton<FoodSourcesConfigurationComponent>()
+                    FoodSourcesConfiguration = SystemAPI.GetSingleton<FoodSourcesConfigurationComponent>(),
+                    RainbowTroutEnergyConfiguration = SystemAPI.GetSingleton<RainbowTroutEnergyConfigurationComponent>()
                 });
                 ecb.Playback(EntityManager);
                 ecb.Dispose();
