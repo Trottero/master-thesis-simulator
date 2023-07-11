@@ -22,11 +22,11 @@ namespace Simulator.Boids
             var adjustedRotation = RotateTowards(math.normalizesafe(physicsVelocity.Linear, transform.Forward),
                 boid.OptimalDirection, maxRot * SimulationFrameworkConfig.UpdateInterval, 0f);
 
-            physicsVelocity.Linear = adjustedRotation * Config.Speed * SimulationFrameworkConfig.MaxSimulationSpeed;
+            physicsVelocity.Linear = adjustedRotation * Config.Speed;
 
             // This should force the boid to rotate towards the direction it wants to go.
             var diff = boid.OptimalDirection - transform.Forward;
-            physicsVelocity.Angular = diff * SimulationFrameworkConfig.MaxSimulationSpeed;
+            physicsVelocity.Angular = diff;
         }
 
         private static float3 RotateTowards(float3 current, float3 target, float maxRadsDelta, float maxMag)

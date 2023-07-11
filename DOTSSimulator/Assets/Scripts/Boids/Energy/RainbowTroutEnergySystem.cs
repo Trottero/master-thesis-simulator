@@ -37,15 +37,15 @@ namespace Simulator.Boids.Energy
             {
                 return;
             }
-            
+
             var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
             var cr = (decimal)_configurationComponent.EnergyConfiguration.ConsumptionRate;
             // Update energy level
-            
+
             Entities.WithAll<BoidComponent, EnergyComponent>().WithoutBurst()
                 .ForEach((ref EnergyComponent energy) => energy.Weight = getNextWeight(energy.Weight, dt))
                 .Run();
-            
+
             var ecb = new EntityCommandBuffer(Allocator.TempJob);
             // // Delete enties with energy level below 0
             Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<NoEnergyComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
@@ -55,20 +55,21 @@ namespace Simulator.Boids.Energy
                         ecb.AddComponent<NoEnergyComponent>(e);
                     }
                 }).Run();
-            
+
             ecb.DestroyEntity(_noEnergyQuery);
             ecb.Playback(EntityManager);
             ecb.Dispose();
 
         }
-        
+
         private decimal getNextWeight(decimal weight, decimal dt)
         {
             var W = weight;
             var Pred_E_i = (decimal)getPredatorDensity(weight, _config.Alpha1, _config.Beta1);
 
-            var mean_prey_ED = 1f; // We fix this to one, our prey is extremely dense.
-            var Ration_prey = 100f;
+            const int secondsInDay = 24 * 60 * 60;
+            var mean_prey_ED = 3000f; // We fix this to one, our prey is extremely dense.
+            var Ration_prey = (float)(_configurationComponent.EnergyConfiguration.FeedingRate * secondsInDay);
             var Cons = (Ration_prey / (float)W) * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
             var Cons_p1 = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
             var pvalue = Cons / Cons_p1;
@@ -79,16 +80,16 @@ namespace Simulator.Boids.Energy
             var Res = respiration(GetTemperature, weight) * _config.Oxycal;
 
             var G = Cons - (Res + Eg + Ex + SpecDA);
-                
+
             var spawn = 0;
             var egain = (decimal)G * W;
             var SpawnE = spawn * W * Pred_E_i;
             var finalwt = Mathm.Power((egain - SpawnE + Pred_E_i * W) / (decimal)_config.Alpha1, 1 / (decimal)(_config.Beta1 + 1));
             // Full day
             var gain = finalwt - W;
-            return W + gain / 24 / 60 / 60 * dt;
+            return W + gain / secondsInDay * dt;
         }
-        
+
         private float consumption(float temperature, float weight, float pvalue)
         {
             float Cf3T(float t)
@@ -101,7 +102,7 @@ namespace Simulator.Boids.Energy
                 var ft = KA * KB;
                 return ft;
             }
-            
+
             var Cmax = _config.CA * Mathf.Pow(weight, _config.CB);
             var ft = Cf3T(temperature);
             return Cmax * pvalue * ft;
@@ -109,14 +110,14 @@ namespace Simulator.Boids.Energy
 
         private float getPredatorDensity(decimal weight, float alpha1, float beta1)
         {
-           return alpha1 * Mathf.Pow((float)weight, beta1);
+            return alpha1 * Mathf.Pow((float)weight, beta1);
         }
 
         private float SpDynAct(float consumption, float egestion)
         {
             return _config.SDA * (consumption - egestion);
         }
-        
+
         private float excretion(float consumption, float egestion, float temperature, float pvalue)
         {
             return _config.UA * Mathf.Pow(temperature, _config.UB) * Mathf.Exp(_config.UG * pvalue) * (consumption - egestion);
@@ -124,27 +125,27 @@ namespace Simulator.Boids.Energy
         private float egestion(float consumption, float temperature, float pvalue)
         {
             // Egestion model from Stewart et al. (1983)
-            var PE = _config.FA * Mathf.Pow(temperature , _config.FB) * Mathf.Exp(_config.FG * pvalue);
+            var PE = _config.FA * Mathf.Pow(temperature, _config.FB) * Mathf.Exp(_config.FG * pvalue);
             // var PFF = sum(globalout_Ind_Prey[i,] * globalout_Prey[i,]); // allows specification of indigestible prey, as proportions
             var PFF = 0f;
             var PF = ((PE - 0.1f) / 0.9f) * (1 - PFF) + PFF;
             var Eg = PF * consumption;
             return Eg;
         }
-        
+
         private float respiration(float temperature, decimal weight)
         {
             var RY = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO + 2);
             var RZ = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO);
             var RX = Mathf.Pow(RZ, 2) * Mathf.Pow(1 + Mathf.Pow(1 + 40 / RY, 0.5f), 2) / 400;
-            
+
             float Rf2T(float t)
             {
                 if (t >= _config.RTM)
                 {
                     return 0.000001f;
                 }
-                
+
                 var V = (_config.RTM - t) / (_config.RTM - _config.RTO);
                 var ft = Mathf.Pow(V, RX * Mathf.Exp(RX * (1 - V)));
 
@@ -157,6 +158,6 @@ namespace Simulator.Boids.Energy
             return R;
         }
 
-        private float GetTemperature => 22.5f;
+        private float GetTemperature => 5f;
     }
 }

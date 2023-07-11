@@ -99,21 +99,23 @@ namespace Simulator.Boids
                 Config = _configurationComponent.BoidsConfiguration,
                 SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration
             }.ScheduleParallel(_boidDisplacementQuery, optimalDirectionHandle);
+            
+            updateBoidLocationsHandle.Complete();
 
             // Update the energy when close to things
-            var updateFishEnergyJobHandler = new UpdateFishEnergyJob
-            {
-                FoodSourceInformation = foodSourceInformation,
-                FoodSourceLocations = foodSourcePositions,
-                EnergyConfig = _configurationComponent.EnergyConfiguration,
-                SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration
-            }.Schedule(_boidEnergyQuery, updateBoidLocationsHandle);
-
-            // Update the food sources
-            new UpdateFoodSourceEnergyJob
-            {
-                FoodSourceInformation = foodSourceInformation
-            }.ScheduleParallel(_foodSourceQuery, updateFishEnergyJobHandler).Complete();
+            // var updateFishEnergyJobHandler = new UpdateFishEnergyJob
+            // {
+            //     FoodSourceInformation = foodSourceInformation,
+            //     FoodSourceLocations = foodSourcePositions,
+            //     EnergyConfig = _configurationComponent.EnergyConfiguration,
+            //     SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration
+            // }.Schedule(_boidEnergyQuery, updateBoidLocationsHandle);
+            //
+            // // Update the food sources
+            // new UpdateFoodSourceEnergyJob
+            // {
+            //     FoodSourceInformation = foodSourceInformation
+            // }.ScheduleParallel(_foodSourceQuery, updateFishEnergyJobHandler).Complete();
 
             boidPositions.Dispose(Dependency);
             foodSourcePositions.Dispose(Dependency);

@@ -1,0 +1,65 @@
+﻿{
+  "SimulationFrameworkConfiguration": {
+    "UpdatesPerSecond": 5,
+    "MaxSimulationSpeed": 60
+  },
+  "BoidsConfiguration": {
+    "Speed": 0.84,
+    "RotationSpeed": 120,
+    "PerceptionRange": 10,
+    "SeparationWeight": 1,
+    "CohesionWeight": 1,
+    "AlignmentWeight": 1,
+    "StayInCubeWeight": 1,
+    "FoodSourceWeight": 2
+  },
+  "EnergyConfiguration": {
+    "InitialEnergyLevel": 384,
+    "ConsumptionRate": 0.0000064621913580246909,
+    "FeedingRate": 0.000030285493827160491,
+    "EnergyEquation": 1
+  },
+  "ReproductionConfiguration": {
+    "MinWeightForReproduction": 500,
+    "ReproductionWeightLoss": 200,
+    "OffspringWeight": 200,
+    "ReproductionEnabled": false
+  },
+  "SchoolConfiguration": {
+    "CageSize": 10,
+    "SwarmSize": 25
+  },
+  "FoodSourcesConfiguration": {
+    "NumberOfFoodSources": 1,
+    "EnergyLevel": 450,
+    "RegenerationRate": 0.000757137345679012275,
+    "MaxEnergyLevel": 800,
+    "FeedingRadius": 1
+  },
+  "RainbowTroutEnergyConfiguration": {
+    "RTM": 26,
+    "RTO": 22,
+    "RA": 0.013,
+    "RQ": 2.2,
+    "RB": -0.217,
+    "ACT": 1.3,
+    "SDA": 0.172,
+    "Alpha1": 5763,
+    "Beta1": 0.986,
+    "Oxycal": 13560,
+    "UA": 0.0314,
+    "UB": 0.58,
+    "UG": -0.299,
+    "CQ": 3.5,
+    "CA": 0.628,
+    "CB": -0.3,
+    "CK1": 0.2,
+    "CK4": 0.2,
+    "CTL": 24.3,
+    "CTO": 25,
+    "CTM": 22.5,
+    "FA": 0.212,
+    "FB": -0.222,
+    "FG": 0.631
+  }
+}
