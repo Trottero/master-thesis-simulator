@@ -1,7 +1,6 @@
 using Simulator.Configuration;
 using Simulator.Configuration.Components;
 using Simulator.Framework;
-using Unity.Collections;
 using Unity.Entities;
 
 namespace Simulator.Boids.Energy
@@ -16,7 +15,6 @@ namespace Simulator.Boids.Energy
         protected override void OnCreate()
         {
             base.OnCreate();
-            _noEnergyQuery = GetEntityQuery(typeof(NoEnergyComponent));
             RequireForUpdate<GlobalConfigurationComponent>();
         }
 
@@ -36,22 +34,18 @@ namespace Simulator.Boids.Energy
             var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
             var cr = (decimal)_configurationComponent.EnergyConfiguration.ConsumptionRate;
             // Update energy level
-            Entities.WithAll<BoidComponent, EnergyComponent>().ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).Run();
+            Entities.WithAll<BoidComponent, EnergyComponent>().ForEach((ref EnergyComponent energy) => energy.Weight -= cr * dt).ScheduleParallel();
 
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            // // Delete enties with energy level below 0
-            Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<NoEnergyComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
-                {
-                    if (energy.Weight < 0)
+            Entities
+                .WithDeferredPlaybackSystem<EndSimulationEntityCommandBufferSystem>()
+                .ForEach((Entity entity, EntityCommandBuffer ecb, in EnergyComponent health) =>
                     {
-                        ecb.AddComponent<NoEnergyComponent>(e);
+                        if (health.Weight < 0)
+                        {
+                            ecb.DestroyEntity(entity);
+                        }
                     }
-                }).Run();
-
-            ecb.DestroyEntity(_noEnergyQuery);
-            ecb.Playback(EntityManager);
-            ecb.Dispose();
-
+                ).ScheduleParallel();
         }
     }
 }
