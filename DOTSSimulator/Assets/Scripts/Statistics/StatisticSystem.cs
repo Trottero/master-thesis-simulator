@@ -6,6 +6,7 @@ using Simulator.Configuration.Components;
 using Simulator.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Simulator.Statistics
 {
@@ -118,6 +119,11 @@ namespace Simulator.Statistics
             _statisticWriter.Write(values.Select(x => x.ToString()).ToArray());
             
             EntityManager.SetComponentData(_statisticEntity, new StatisticComponentData { Step = (statistics.Step + 1) % (long)(3600 * _simulationFrameworkConfiguration.UpdatesPerSecond), MetaStep = statistics.MetaStep + 1});
+
+            if (_simulationFrameworkConfiguration.HoursToSimulate != 0 && statistics.MetaStep + 1 >= _simulationFrameworkConfiguration.HoursToSimulate)
+            {
+                Application.Quit();
+            }
         }
     }
 }

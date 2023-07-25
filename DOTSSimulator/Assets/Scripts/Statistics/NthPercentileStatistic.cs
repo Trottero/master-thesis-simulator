@@ -12,6 +12,13 @@ namespace Simulator.Statistics
             PostAggregator = (system, statistic) =>
             {
                 var entities = statistic.Query.ToEntityArray(Allocator.TempJob);
+                if (entities.Length == 0)
+                {
+                    statistic.Value = 0;
+                    entities.Dispose();
+                    return;
+                }
+                
                 var values = new float[entities.Length];
                 for (var i = 0; i < entities.Length; i++)
                 {
@@ -19,7 +26,7 @@ namespace Simulator.Statistics
                 }
                 
                 // Calculate index of percentile
-                var index = (int)Mathf.Round(percentile * entities.Length);
+                var index = Math.Clamp((int)Mathf.Round(percentile * entities.Length), 0, entities.Length - 1);
                 
                 // Sort values
                 Array.Sort(values);
