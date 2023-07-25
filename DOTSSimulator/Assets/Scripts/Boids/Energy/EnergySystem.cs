@@ -45,7 +45,7 @@ namespace Simulator.Boids.Energy
                             ecb.DestroyEntity(entity);
                         }
                     }
-                ).ScheduleParallel();
+                ).Run();
         }
     }
 }
