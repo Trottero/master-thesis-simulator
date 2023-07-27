@@ -68,18 +68,18 @@ namespace Simulator.Boids.Energy
             var Pred_E_i = (decimal)getPredatorDensity(weight, _config.Alpha1, _config.Beta1);
 
             const int secondsInDay = 24 * 60 * 60;
-            var mean_prey_ED = 3000f; // We fix this to one, our prey is extremely dense.
+            var mean_prey_ED = 1f; // We fix this to one, our prey is extremely dense.
             var Ration_prey = (float)(_configurationComponent.EnergyConfiguration.FeedingRate * secondsInDay);
-            var Cons = (Ration_prey / (float)W) * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
-            var Cons_p1 = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
-            var pvalue = Cons / Cons_p1;
+            var consumptionMax = Ration_prey / (float)W * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
+            var consumed = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
+            var pvalue = consumptionMax / consumed;
 
-            var Eg = egestion(Cons, GetTemperature, pvalue);
-            var SpecDA = SpDynAct(Cons, Eg);
-            var Ex = excretion(Cons, Eg, GetTemperature, pvalue);
+            var Eg = egestion(consumptionMax, GetTemperature, pvalue);
+            var SpecDA = SpDynAct(consumptionMax, Eg);
+            var Ex = excretion(consumptionMax, Eg, GetTemperature, pvalue);
             var Res = respiration(GetTemperature, weight) * _config.Oxycal;
 
-            var G = Cons - (Res + Eg + Ex + SpecDA);
+            var G = consumptionMax - (Res + Eg + Ex + SpecDA);
 
             var spawn = 0;
             var egain = (decimal)G * W;
@@ -96,16 +96,15 @@ namespace Simulator.Boids.Energy
             {
                 // Temperature function equation 3 (Hanson et al. 1997; equation from Thornton and Lessem 1978)
                 var L1 = Mathf.Exp(_config.CG1 * (t - _config.CQ));
-                var KA = (_config.CK1 * L1) / (1 + _config.CK1 * (L1 - 1));
+                var KA = _config.CK1 * L1 / (1 + _config.CK1 * (L1 - 1));
                 var L2 = Mathf.Exp(_config.CG2 * (_config.CTL - t));
-                var KB = (_config.CK4 * L2) / (1 + _config.CK4 * (L2 - 1));
-                var ft = KA * KB;
-                return ft;
+                var KB = _config.CK4 * L2 / (1 + _config.CK4 * (L2 - 1));
+                return KA * KB;
             }
 
-            var Cmax = _config.CA * Mathf.Pow(weight, _config.CB);
+            var cMax = _config.CA * Mathf.Pow(weight, _config.CB);
             var ft = Cf3T(temperature);
-            return Cmax * pvalue * ft;
+            return cMax * pvalue * ft;
         }
 
         private float getPredatorDensity(decimal weight, float alpha1, float beta1)
@@ -128,7 +127,7 @@ namespace Simulator.Boids.Energy
             var PE = _config.FA * Mathf.Pow(temperature, _config.FB) * Mathf.Exp(_config.FG * pvalue);
             // var PFF = sum(globalout_Ind_Prey[i,] * globalout_Prey[i,]); // allows specification of indigestible prey, as proportions
             var PFF = 0f;
-            var PF = ((PE - 0.1f) / 0.9f) * (1 - PFF) + PFF;
+            var PF = (PE - 0.1f) / 0.9f * (1 - PFF) + PFF;
             var Eg = PF * consumption;
             return Eg;
         }
@@ -137,7 +136,7 @@ namespace Simulator.Boids.Energy
         {
             var RY = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO + 2);
             var RZ = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO);
-            var RX = Mathf.Pow(RZ, 2) * Mathf.Pow(1 + Mathf.Pow(1 + 40 / RY, 0.5f), 2) / 400;
+            var RX = Mathf.Pow(RZ, 2) * Mathf.Pow(1 + Mathf.Sqrt(1 + 40 / RY), 2) / 400;
 
             float Rf2T(float t)
             {
@@ -147,7 +146,7 @@ namespace Simulator.Boids.Energy
                 }
 
                 var V = (_config.RTM - t) / (_config.RTM - _config.RTO);
-                var ft = Mathf.Pow(V, RX * Mathf.Exp(RX * (1 - V)));
+                var ft = Mathf.Pow(V, RX) * Mathf.Exp(RX * (1 - V));
 
                 return ft < 0 ? 0.000001f : ft;
             }

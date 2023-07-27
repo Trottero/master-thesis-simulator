@@ -31,8 +31,8 @@ namespace Simulator.Configuration.Components
 
         public float CTO; // laboratory temperature preferendum
         public float CTM; // maximum water temperature above which consumption ceases
-        public float CG1 => (1 / (CTO - CQ)) * Mathf.Log((0.98f * (1 - CK1)) / (CK1 * 0.02f));
-        public float CG2 => (1 / (CTL - CTM)) * Mathf.Log((0.98f * (1 - CK4)) / (CK4 * 0.02f));
+        public float CG1 => 1 / (CTO - CQ) * Mathf.Log(0.98f * (1 - CK1) / (CK1 * 0.02f));
+        public float CG2 => 1 / (CTL - CTM) * Mathf.Log(0.98f * (1 - CK4) / (CK4 * 0.02f));
 
         public float FA; // Egestion
         public float FB; // coefficient of water temperature dependence of egestion
