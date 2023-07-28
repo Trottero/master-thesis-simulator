@@ -68,7 +68,7 @@ namespace Simulator.Boids.Energy
             var Pred_E_i = (decimal)getPredatorDensity(weight, _config.Alpha1, _config.Beta1);
 
             const int secondsInDay = 24 * 60 * 60;
-            var mean_prey_ED = 1f; // We fix this to one, our prey is extremely dense.
+            var mean_prey_ED = 3000f; // We fix this to one, our prey is extremely dense.
             var Ration_prey = (float)(_configurationComponent.EnergyConfiguration.FeedingRate * secondsInDay);
             var consumptionMax = Ration_prey / (float)W * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
             var consumed = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
@@ -82,12 +82,91 @@ namespace Simulator.Boids.Energy
             var G = consumptionMax - (Res + Eg + Ex + SpecDA);
 
             var spawn = 0;
-            var egain = (decimal)G * W;
+            var egain = G * (float)W;
             var SpawnE = spawn * W * Pred_E_i;
-            var finalwt = Mathm.Power((egain - SpawnE + Pred_E_i * W) / (decimal)_config.Alpha1, 1 / (decimal)(_config.Beta1 + 1));
-            // Full day
+            var finalwt = (decimal)CalculateAllomatricMass(egain, (float)SpawnE, (float)W);   // Full day
             var gain = finalwt - W;
             return W + gain / secondsInDay * dt;
+        }
+
+        private float CalculateAllomatricMass(float egain, float spawnE, float W)
+        {
+            float finalwt;
+            if (W < _config.Cutoff)
+            {
+                if (_config.Beta1 == 0)
+                {
+                    finalwt = (egain - spawnE + W * _config.Alpha1) / _config.Alpha1;
+                }
+                else
+                {
+                    var flagval = (_config.Alpha1 * _config.Alpha1 + 4 * _config.Beta1 *
+                        (W * (_config.Alpha1 + _config.Beta1 * W) + egain - spawnE));
+                    if (flagval < 0)
+                    {
+                        Debug.LogError("Fish lost too much weight");
+                    }
+                    finalwt = (-_config.Alpha1 + Mathf.Sqrt(flagval)) / (2 * _config.Beta1);
+                }
+                
+                if (finalwt > _config.Cutoff)
+                {
+                    // Check if pushed over cutoff
+                    var a1b1cut = _config.Alpha1 + _config.Beta1 * _config.Cutoff;
+                    var egainco = _config.Cutoff * a1b1cut - W * a1b1cut;
+
+                    if (_config.Beta2 == 0)
+                    {
+                        return (egain - spawnE - egainco + _config.Cutoff * a1b1cut) / _config.Alpha2;
+                    }
+
+                    var flagval2 = _config.Alpha2 * _config.Alpha2 + 4 * _config.Beta2 *
+                        (egain - spawnE - egainco + _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff));
+                    if (flagval2 < 0)
+                    {
+                        Debug.LogError("Fish lost too much weight");
+                    }
+                    
+                    return (-_config.Alpha2 + Mathf.Sqrt(flagval2)) / (2 * _config.Beta2);
+                }
+
+                return finalwt;
+            }
+
+            if (_config.Beta2 == 0)
+            {
+                return (egain - spawnE + W * _config.Alpha2) / _config.Alpha2;
+            }
+            
+            var flagval3 = _config.Alpha2 * _config.Alpha2 + 4 * _config.Beta2 *
+                (W * (_config.Alpha2 + _config.Beta2 * W) + egain - spawnE);
+
+            if (flagval3 < 0)
+            {
+                Debug.LogError("Fish lost too much weight");
+            }
+            
+            finalwt = (-_config.Alpha2 + Mathf.Sqrt(flagval3)) / (2 * _config.Beta2);
+            if (finalwt >= _config.Cutoff)
+            {
+                return finalwt;
+            }
+            
+            // Recalculate if below cutoff
+            var elossCo = W * (_config.Alpha2 + _config.Beta2 * W) - _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff);
+            if (_config.Beta1 == 0)
+            {
+                return (egain - spawnE + elossCo + _config.Cutoff * _config.Alpha1) / _config.Alpha1;
+            }
+            
+            var flagval4 = _config.Alpha1 * _config.Alpha1 + 4 * _config.Beta1 *
+                (egain - spawnE + elossCo + _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff));
+            if (flagval4 < 0)
+            {
+                Debug.LogError("Fish lost too much weight");
+            }
+            
+            return (-_config.Alpha1 + Mathf.Sqrt(flagval4)) / (2 * _config.Beta1);
         }
 
         private float consumption(float temperature, float weight, float pvalue)

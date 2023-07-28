@@ -15,6 +15,9 @@ namespace Simulator.Configuration.Authoring
         public float Sda;
         public float Alpha1;
         public float Beta1;
+        public float Cutoff;
+        public float Alpha2;
+        public float Beta2;
         public float Oxycal;
         public float Ua;
         public float Ub;
@@ -48,6 +51,9 @@ namespace Simulator.Configuration.Authoring
                 SDA = authoring.Sda,
                 Alpha1 = authoring.Alpha1,
                 Beta1 = authoring.Beta1,
+                Cutoff = authoring.Cutoff,
+                Alpha2 = authoring.Alpha2,
+                Beta2 = authoring.Beta2,
                 Oxycal = authoring.Oxycal,
                 UA = authoring.Ua,
                 UB = authoring.Ub,

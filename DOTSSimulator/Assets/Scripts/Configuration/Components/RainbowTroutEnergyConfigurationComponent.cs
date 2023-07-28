@@ -16,6 +16,9 @@ namespace Simulator.Configuration.Components
 
         public float Alpha1; // intercept for the allometric mass function for first size range
         public float Beta1; // slope of the allometric mass function for first size range
+        public float Cutoff; // cutoff size between the two allometric mass functions
+        public float Alpha2; // intercept for the allometric mass function for second size range
+        public float Beta2; // slope of the allometric mass function for second size range
         public float Oxycal;
 
         public float UA; // Excretion

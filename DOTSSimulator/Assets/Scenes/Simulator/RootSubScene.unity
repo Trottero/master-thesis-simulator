@@ -176,6 +176,9 @@ MonoBehaviour:
   Sda: 0.172
   Alpha1: 5763
   Beta1: 0.986
+  Cutoff: 4000
+  Alpha2: 7602
+  Beta2: 0.5266
   Oxycal: 13560
   Ua: 0.0314
   Ub: 0.58
@@ -379,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CageSize: 10
-  SwarmSize: 25
+  SwarmSize: 1
 --- !u!1 &669985789
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialEnergyLevel: 384
   ConsumptionRate: 0.000006462191358024691
-  FeedingRate: 0.00003028549382716049
+  FeedingRate: 0.0000578703703703703
   EnergyEquation: 1
 --- !u!1 &722219049
 GameObject:
