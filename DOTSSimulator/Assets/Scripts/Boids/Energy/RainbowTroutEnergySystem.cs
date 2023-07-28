@@ -1,3 +1,4 @@
+using Simulator.Boids.Energy.Jobs;
 using Simulator.Configuration;
 using Simulator.Configuration.Components;
 using Simulator.Framework;
@@ -14,12 +15,12 @@ namespace Simulator.Boids.Energy
         private GlobalConfigurationComponent _configurationComponent;
         private RainbowTroutEnergyConfigurationComponent _config;
 
-        private EntityQuery _noEnergyQuery;
+        private EntityQuery _energyQuery;
 
         protected override void OnCreate()
         {
             base.OnCreate();
-            _noEnergyQuery = GetEntityQuery(typeof(NoEnergyComponent));
+            _energyQuery = GetEntityQuery(typeof(EnergyComponent));
             RequireForUpdate<GlobalConfigurationComponent>();
         }
 
@@ -39,203 +40,27 @@ namespace Simulator.Boids.Energy
             }
 
             var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
-            var cr = (decimal)_configurationComponent.EnergyConfiguration.ConsumptionRate;
             // Update energy level
 
-            Entities.WithAll<BoidComponent, EnergyComponent>().WithoutBurst()
-                .ForEach((ref EnergyComponent energy) => energy.Weight = getNextWeight(energy.Weight, dt))
-                .Run();
+            var updateEnergyJobHandle = new RainbowTroutEnergyJob
+            {
+                EnergyConfig = _configurationComponent.EnergyConfiguration,
+                SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration,
+                RainbowTroutEnergyConfig = _config,
+            }.ScheduleParallel(_energyQuery, Dependency);
+            
+            updateEnergyJobHandle.Complete();
 
-            var ecb = new EntityCommandBuffer(Allocator.TempJob);
-            // // Delete enties with energy level below 0
-            Entities.WithAll<BoidComponent, EnergyComponent>().WithNone<NoEnergyComponent>().WithoutBurst().ForEach((Entity e, in EnergyComponent energy) =>
-                {
-                    if (energy.Weight < 0)
+            Entities
+                .WithDeferredPlaybackSystem<EndSimulationEntityCommandBufferSystem>()
+                .ForEach((Entity entity, EntityCommandBuffer ecb, in EnergyComponent health) =>
                     {
-                        ecb.AddComponent<NoEnergyComponent>(e);
+                        if (health.Weight < 0)
+                        {
+                            ecb.DestroyEntity(entity);
+                        }
                     }
-                }).Run();
-
-            ecb.DestroyEntity(_noEnergyQuery);
-            ecb.Playback(EntityManager);
-            ecb.Dispose();
-
+                ).Run();
         }
-
-        private decimal getNextWeight(decimal weight, decimal dt)
-        {
-            var W = weight;
-            var Pred_E_i = (decimal)getPredatorDensity(weight, _config.Alpha1, _config.Beta1);
-
-            const int secondsInDay = 24 * 60 * 60;
-            var mean_prey_ED = 3000f; // We fix this to one, our prey is extremely dense.
-            var Ration_prey = (float)(_configurationComponent.EnergyConfiguration.FeedingRate * secondsInDay);
-            var consumptionMax = Ration_prey / (float)W * mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
-            var consumed = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
-            var pvalue = consumptionMax / consumed;
-
-            var Eg = egestion(consumptionMax, GetTemperature, pvalue);
-            var SpecDA = SpDynAct(consumptionMax, Eg);
-            var Ex = excretion(consumptionMax, Eg, GetTemperature, pvalue);
-            var Res = respiration(GetTemperature, weight) * _config.Oxycal;
-
-            var G = consumptionMax - (Res + Eg + Ex + SpecDA);
-
-            var spawn = 0;
-            var egain = G * (float)W;
-            var SpawnE = spawn * W * Pred_E_i;
-            var finalwt = (decimal)CalculateAllomatricMass(egain, (float)SpawnE, (float)W);   // Full day
-            var gain = finalwt - W;
-            return W + gain / secondsInDay * dt;
-        }
-
-        private float CalculateAllomatricMass(float egain, float spawnE, float W)
-        {
-            float finalwt;
-            if (W < _config.Cutoff)
-            {
-                if (_config.Beta1 == 0)
-                {
-                    finalwt = (egain - spawnE + W * _config.Alpha1) / _config.Alpha1;
-                }
-                else
-                {
-                    var flagval = (_config.Alpha1 * _config.Alpha1 + 4 * _config.Beta1 *
-                        (W * (_config.Alpha1 + _config.Beta1 * W) + egain - spawnE));
-                    if (flagval < 0)
-                    {
-                        Debug.LogError("Fish lost too much weight");
-                    }
-                    finalwt = (-_config.Alpha1 + Mathf.Sqrt(flagval)) / (2 * _config.Beta1);
-                }
-                
-                if (finalwt > _config.Cutoff)
-                {
-                    // Check if pushed over cutoff
-                    var a1b1cut = _config.Alpha1 + _config.Beta1 * _config.Cutoff;
-                    var egainco = _config.Cutoff * a1b1cut - W * a1b1cut;
-
-                    if (_config.Beta2 == 0)
-                    {
-                        return (egain - spawnE - egainco + _config.Cutoff * a1b1cut) / _config.Alpha2;
-                    }
-
-                    var flagval2 = _config.Alpha2 * _config.Alpha2 + 4 * _config.Beta2 *
-                        (egain - spawnE - egainco + _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff));
-                    if (flagval2 < 0)
-                    {
-                        Debug.LogError("Fish lost too much weight");
-                    }
-                    
-                    return (-_config.Alpha2 + Mathf.Sqrt(flagval2)) / (2 * _config.Beta2);
-                }
-
-                return finalwt;
-            }
-
-            if (_config.Beta2 == 0)
-            {
-                return (egain - spawnE + W * _config.Alpha2) / _config.Alpha2;
-            }
-            
-            var flagval3 = _config.Alpha2 * _config.Alpha2 + 4 * _config.Beta2 *
-                (W * (_config.Alpha2 + _config.Beta2 * W) + egain - spawnE);
-
-            if (flagval3 < 0)
-            {
-                Debug.LogError("Fish lost too much weight");
-            }
-            
-            finalwt = (-_config.Alpha2 + Mathf.Sqrt(flagval3)) / (2 * _config.Beta2);
-            if (finalwt >= _config.Cutoff)
-            {
-                return finalwt;
-            }
-            
-            // Recalculate if below cutoff
-            var elossCo = W * (_config.Alpha2 + _config.Beta2 * W) - _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff);
-            if (_config.Beta1 == 0)
-            {
-                return (egain - spawnE + elossCo + _config.Cutoff * _config.Alpha1) / _config.Alpha1;
-            }
-            
-            var flagval4 = _config.Alpha1 * _config.Alpha1 + 4 * _config.Beta1 *
-                (egain - spawnE + elossCo + _config.Cutoff * (_config.Alpha1 + _config.Beta1 * _config.Cutoff));
-            if (flagval4 < 0)
-            {
-                Debug.LogError("Fish lost too much weight");
-            }
-            
-            return (-_config.Alpha1 + Mathf.Sqrt(flagval4)) / (2 * _config.Beta1);
-        }
-
-        private float consumption(float temperature, float weight, float pvalue)
-        {
-            float Cf3T(float t)
-            {
-                // Temperature function equation 3 (Hanson et al. 1997; equation from Thornton and Lessem 1978)
-                var L1 = Mathf.Exp(_config.CG1 * (t - _config.CQ));
-                var KA = _config.CK1 * L1 / (1 + _config.CK1 * (L1 - 1));
-                var L2 = Mathf.Exp(_config.CG2 * (_config.CTL - t));
-                var KB = _config.CK4 * L2 / (1 + _config.CK4 * (L2 - 1));
-                return KA * KB;
-            }
-
-            var cMax = _config.CA * Mathf.Pow(weight, _config.CB);
-            var ft = Cf3T(temperature);
-            return cMax * pvalue * ft;
-        }
-
-        private float getPredatorDensity(decimal weight, float alpha1, float beta1)
-        {
-            return alpha1 * Mathf.Pow((float)weight, beta1);
-        }
-
-        private float SpDynAct(float consumption, float egestion)
-        {
-            return _config.SDA * (consumption - egestion);
-        }
-
-        private float excretion(float consumption, float egestion, float temperature, float pvalue)
-        {
-            return _config.UA * Mathf.Pow(temperature, _config.UB) * Mathf.Exp(_config.UG * pvalue) * (consumption - egestion);
-        }
-        private float egestion(float consumption, float temperature, float pvalue)
-        {
-            // Egestion model from Stewart et al. (1983)
-            var PE = _config.FA * Mathf.Pow(temperature, _config.FB) * Mathf.Exp(_config.FG * pvalue);
-            // var PFF = sum(globalout_Ind_Prey[i,] * globalout_Prey[i,]); // allows specification of indigestible prey, as proportions
-            var PFF = 0f;
-            var PF = (PE - 0.1f) / 0.9f * (1 - PFF) + PFF;
-            var Eg = PF * consumption;
-            return Eg;
-        }
-
-        private float respiration(float temperature, decimal weight)
-        {
-            var RY = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO + 2);
-            var RZ = Mathf.Log(_config.RQ) * (_config.RTM - _config.RTO);
-            var RX = Mathf.Pow(RZ, 2) * Mathf.Pow(1 + Mathf.Sqrt(1 + 40 / RY), 2) / 400;
-
-            float Rf2T(float t)
-            {
-                if (t >= _config.RTM)
-                {
-                    return 0.000001f;
-                }
-
-                var V = (_config.RTM - t) / (_config.RTM - _config.RTO);
-                var ft = Mathf.Pow(V, RX) * Mathf.Exp(RX * (1 - V));
-
-                return ft < 0 ? 0.000001f : ft;
-            }
-
-            var Rmax = _config.RA * Mathf.Pow((float)weight, _config.RB);
-            var ft = Rf2T(temperature);
-            var R = Rmax * ft * _config.ACT;
-            return R;
-        }
-
-        private float GetTemperature => 5f;
     }
 }

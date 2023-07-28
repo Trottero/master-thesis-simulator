@@ -17,7 +17,7 @@
   "EnergyConfiguration": {
     "InitialEnergyLevel": 384,
     "ConsumptionRate": 0.0000064621913580246909,
-    "FeedingRate": 0.0000578703703703703,
+    "FeedingRate": 0,
     "EnergyEquation": 1
   },
   "ReproductionConfiguration": {
