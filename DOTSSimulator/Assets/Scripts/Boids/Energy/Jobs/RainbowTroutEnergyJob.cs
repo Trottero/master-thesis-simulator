@@ -1,8 +1,10 @@
-﻿using Simulator.Configuration.Components;
+﻿using Simulator.Boids.Energy.Producers.Components;
+using Simulator.Configuration.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Simulator.Boids.Energy.Jobs
@@ -14,17 +16,39 @@ namespace Simulator.Boids.Energy.Jobs
         [ReadOnly] public SimulationFrameworkConfigurationComponent SimulationFrameworkConfig;
         [ReadOnly] public RainbowTroutEnergyConfigurationComponent RainbowTroutEnergyConfig;
 
-        // [ReadOnly] public NativeArray<LocalToWorld> FoodSourceLocations;
+        [ReadOnly] public NativeArray<LocalToWorld> FoodSourceLocations;
+        public NativeArray<FoodSourceComponent> FoodSourceInformation;
 
 
-        void Execute(ref EnergyComponent fishEnergy)
+        void Execute(ref EnergyComponent fishEnergy, in LocalToWorld boidLocation)
         {
             const int secondsInDay = 24 * 60 * 60;
-            var gain = getNextWeight(fishEnergy.Weight, (decimal)SimulationFrameworkConfig.UpdateInterval);
+            var foodIndex = GetFoodIndex(boidLocation);
+            var gain = getNextWeight(fishEnergy.Weight, (decimal)SimulationFrameworkConfig.UpdateInterval, foodIndex);
             fishEnergy.Weight = gain;
         }
 
-        private decimal getNextWeight(decimal weight, decimal dt)
+        private int GetFoodIndex(LocalToWorld boidLocation)
+        {
+            for (int i = 0; i < FoodSourceInformation.Length; i++)
+            {
+                var foodSource = FoodSourceInformation[i];
+                if (foodSource.EnergyLevel <= 5)
+                {
+                    continue;
+                }
+                
+                var foodSourceLocation = FoodSourceLocations[i];
+                var distance = foodSource.EffectiveDistance(boidLocation.Position, foodSourceLocation.Position);
+                if (distance < foodSource.FeedingRadius)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private decimal getNextWeight(decimal weight, decimal dt, int foodIndex)
         {
             var W = weight;
             var Pred_E_i = (decimal)getPredatorDensity(weight, RainbowTroutEnergyConfig.Alpha1,
@@ -32,11 +56,22 @@ namespace Simulator.Boids.Energy.Jobs
 
             const int secondsInDay = 24 * 60 * 60;
             var mean_prey_ED = 3000f; // We fix this to one, our prey is extremely dense.
-            var Ration_prey = (float)(EnergyConfig.FeedingRate * secondsInDay);
-            var consumptionMax =
-                Ration_prey / (float)W *
-                mean_prey_ED; // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
+            var Ration_prey = 0f;
+
             var consumed = consumption(GetTemperature, (float)W, 1) * mean_prey_ED;
+            
+            if (foodIndex != -1)
+            {
+                // In range of a food source, consume from that instead - Magic scalar computed in previous experiments
+                Ration_prey = (float)(EnergyConfig.FeedingRate * secondsInDay);
+                var fc = FoodSourceInformation[foodIndex];
+                fc.EnergyLevel -= (decimal)Ration_prey / secondsInDay * dt;
+                FoodSourceInformation[foodIndex] = fc;
+            }
+            
+            // Ration prey would be the amount of food eaten per day (or in our case grams per timestep)
+            var consumptionMax = Ration_prey / (float)W * mean_prey_ED; 
+            
             var pvalue = consumptionMax / consumed;
 
             var Eg = egestion(consumptionMax, GetTemperature, pvalue);

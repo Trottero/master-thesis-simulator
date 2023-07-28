@@ -1,10 +1,13 @@
 using Simulator.Boids.Energy.Jobs;
+using Simulator.Boids.Energy.Producers.Components;
+using Simulator.Boids.Energy.Producers.Jobs;
 using Simulator.Configuration;
 using Simulator.Configuration.Components;
 using Simulator.Framework;
 using Simulator.Utils;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Simulator.Boids.Energy
@@ -16,11 +19,14 @@ namespace Simulator.Boids.Energy
         private RainbowTroutEnergyConfigurationComponent _config;
 
         private EntityQuery _energyQuery;
+        private EntityQuery _foodSourceQuery;
 
         protected override void OnCreate()
         {
             base.OnCreate();
-            _energyQuery = GetEntityQuery(typeof(EnergyComponent));
+            _energyQuery = GetEntityQuery(typeof(EnergyComponent), typeof(LocalToWorld));
+            _foodSourceQuery = GetEntityQuery(typeof(FoodSourceComponent), typeof(LocalToWorld));
+            
             RequireForUpdate<GlobalConfigurationComponent>();
         }
 
@@ -41,15 +47,23 @@ namespace Simulator.Boids.Energy
 
             var dt = (decimal)_configurationComponent.SimulationFrameworkConfiguration.UpdateInterval;
             // Update energy level
+            
+            var foodSourceInformation = _foodSourceQuery.ToComponentDataArray<FoodSourceComponent>(Allocator.TempJob);
+            var foodSourceLocations = _foodSourceQuery.ToComponentDataArray<LocalToWorld>(Allocator.TempJob);
 
             var updateEnergyJobHandle = new RainbowTroutEnergyJob
             {
                 EnergyConfig = _configurationComponent.EnergyConfiguration,
                 SimulationFrameworkConfig = _configurationComponent.SimulationFrameworkConfiguration,
                 RainbowTroutEnergyConfig = _config,
-            }.ScheduleParallel(_energyQuery, Dependency);
+                FoodSourceInformation = foodSourceInformation,
+                FoodSourceLocations = foodSourceLocations
+            }.Schedule(_energyQuery, Dependency);
             
-            updateEnergyJobHandle.Complete();
+            new UpdateFoodSourceEnergyJob
+            {
+                FoodSourceInformation = foodSourceInformation
+            }.Schedule(_foodSourceQuery, updateEnergyJobHandle).Complete();
 
             Entities
                 .WithDeferredPlaybackSystem<EndSimulationEntityCommandBufferSystem>()
@@ -61,6 +75,9 @@ namespace Simulator.Boids.Energy
                         }
                     }
                 ).Run();
+            
+            foodSourceInformation.Dispose();
+            foodSourceLocations.Dispose();
         }
     }
 }

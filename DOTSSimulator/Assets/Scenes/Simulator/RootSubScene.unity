@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CageSize: 10
-  SwarmSize: 1
+  SwarmSize: 25
 --- !u!1 &669985789
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,9 +560,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NumberOfFoodSources: 4
-  EnergyLevel: 50
-  RegenerationRate: 0
-  MaxEnergyLevel: 50
+  EnergyLevel: 450
+  RegenerationRate: 0.0014467592592592592
+  MaxEnergyLevel: 800
   FeedingRadius: 1
 --- !u!1 &1400816239
 GameObject:
